@@ -7,13 +7,14 @@ public class Entity : MonoBehaviour
     [SerializeField] protected float health;
     [SerializeField] protected float damage;
     [SerializeField] protected float movementSpeed;
-    [SerializeField] protected float maxSpeed;
+
+    [SerializeField] protected float pushForce = 10f;
 
     protected bool isDead = false;
 
 
     protected Rigidbody2D rb2D;
-    protected Animator animator;
+    [SerializeField] protected Animator animator;
 
 
 
@@ -21,19 +22,24 @@ public class Entity : MonoBehaviour
     protected virtual void Start()
     {
         this.rb2D = GetComponent<Rigidbody2D>();
-        this.animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
 
-    protected void ChangeHealth(float _value)
+    public virtual void ChangeHealth(float _value, Entity sender = null)
     {
+        if (sender != null && _value < 0)
+        {
+            Vector2 pushDirection = sender.rb2D.position - this.rb2D.position;
+            this.rb2D.AddForce(pushDirection.normalized * pushForce * 10, ForceMode2D.Impulse);
+        }
+
         health += _value;
         if (health <= 0)
             this.Die();
     }
 
-    protected virtual void Die()
+    public virtual void Die()
     {
         isDead = true;
         Destroy(this.gameObject);
