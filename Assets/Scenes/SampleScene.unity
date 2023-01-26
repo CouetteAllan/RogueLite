@@ -1040,10 +1040,11 @@ MonoBehaviour:
   health: 50
   damage: 0
   movementSpeed: 7
-  pushForce: 0
+  pushForce: 9
   animator: {fileID: 1221841678}
   input: {x: 0, y: 0}
   mouseAim: {x: 0, y: 0}
+  isFlipped: 0
 --- !u!4 &1447056581
 Transform:
   m_ObjectHideFlags: 0
@@ -1191,6 +1192,7 @@ MonoBehaviour:
   range: {x: 0, y: 0}
   offset: {x: 0, y: 0}
   hitbox: {fileID: 1672020279}
+  isAttacking: 0
   pushForceForward: 8
 --- !u!70 &1447056586
 CapsuleCollider2D:

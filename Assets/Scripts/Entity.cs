@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Entity : MonoBehaviour
+public class Entity : MonoBehaviour, IHittable
 {
     [SerializeField] protected Vector2 acceleration;
     [SerializeField] protected Vector2 decceleration;
@@ -30,14 +30,18 @@ public class Entity : MonoBehaviour
 
     // Update is called once per frame
 
-    public virtual void ChangeHealth(float _value, Entity sender = null)
+    public virtual void ChangeHealth(float _value, IHitSource source)
     {
-        if (sender != null && _value < 0)
+        if(_value < 0)
         {
-            Vector2 pushDirection = this.rb2D.position - sender.rb2D.position;
-            this.rb2D.AddForce(pushDirection.normalized * pushForce, ForceMode2D.Impulse);
-            Debug.Log("JE SUIS POUSSE");
+            animator.SetTrigger("Hurt");    
+            if (source != null)
+            {
+                Vector2 pushDirection = this.rb2D.position - source.SourceRigidbody2D.position;
+                this.rb2D.AddForce(pushDirection.normalized * pushForce, ForceMode2D.Impulse);
+            }
         }
+        
 
         health += _value;
         if (health <= 0)
@@ -48,5 +52,10 @@ public class Entity : MonoBehaviour
     {
         isDead = true;
         Destroy(this.gameObject);
+    }
+
+    public virtual void OnHit(float _value, IHitSource source)
+    {
+        ChangeHealth(_value,source);
     }
 }

@@ -9,5 +9,15 @@ public class GameManager : Singleton<GameManager>
         this.player = player;
     }
 
-    
+    public MainCharacterScript GetPlayer()
+    {
+        if (player == null)
+            return null;
+        return player;
+    }
+
+    public void PlayerDeath()
+    {
+        player = null;
+    }
 }

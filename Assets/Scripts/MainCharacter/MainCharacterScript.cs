@@ -11,7 +11,7 @@ public class MainCharacterScript : Entity
     private PlayerInput playerInput;
     public Vector2 mouseAim;
 
-    private bool isFlipped = false;
+    public bool isFlipped = false;
     private float time = 0f;
 
     private PlayerAttack playerAttackScript;
@@ -76,7 +76,7 @@ public class MainCharacterScript : Entity
 
 
 
-    private void Flip()
+    public void Flip()
     {
         isFlipped = !isFlipped;
         this.transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
@@ -108,4 +108,27 @@ public class MainCharacterScript : Entity
         return this.rb2D;
     }
 
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        IHitSource hitSourceObject = collision.GetComponent<IHitSource>();
+        Debug.Log(hitSourceObject);
+        if(hitSourceObject != null)
+        {
+            this.OnHit(-hitSourceObject.Damage, hitSourceObject);
+        }
+    }
+
+    public override void Die()
+    {
+        GameManager.Instance.PlayerDeath();
+        base.Die();
+    }
+
+    private void OnDestroy()
+    {
+        playerInputAction.Player.Disable();
+        playerInputAction.Player.Attack.performed -= playerAttackScript.OnAttack;
+        playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
+    }
 }
