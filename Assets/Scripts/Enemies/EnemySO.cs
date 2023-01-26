@@ -13,6 +13,8 @@ public class EnemySO : ScriptableObject
     public float damage;
     public float rangeRadius = 2f;
 
+    public float attackSpeed = 1;
+
     public Sprite enemySprite;
     public float radiusHitBox;
 

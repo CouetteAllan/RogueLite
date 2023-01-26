@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using CodeMonkey.Utils;
 
 public class EnemyEntity : Entity, IHitSource
 {
@@ -12,6 +13,7 @@ public class EnemyEntity : Entity, IHitSource
     private MainCharacterScript player;
     private Vector2 playerPos;
     private bool canMove = true;
+    private bool inAttackRange;
     public LayerMask playerLayer;
 
     public Rigidbody2D SourceRigidbody2D => this.rb2D;
@@ -35,6 +37,7 @@ public class EnemyEntity : Entity, IHitSource
     {
         base.Start();
         InitEnemyData();
+        StartCoroutine(AIMoveToPlayer());
     }
     void Update()
     {
@@ -52,20 +55,16 @@ public class EnemyEntity : Entity, IHitSource
         if (playerInRange != null)
         {
             Debug.Log("En range d'attaque");
-            StartCoroutine(WaitForMoving(5f));
         }   
 
     }
 
-    private void FixedUpdate()
-    {
-        UpdateMovement();
-
-        
-    }
 
     private void UpdateMovement()
     {
+        //Un vecteur direction
+        Vector2 direction = this.rb2D.position - playerPos;
+        //Une velocité
 
         
     }
@@ -94,6 +93,31 @@ public class EnemyEntity : Entity, IHitSource
     {
         if(rb2D != null)
             Gizmos.DrawWireSphere(this.rb2D.position, enemyData.rangeRadius);
+    }
+
+    IEnumerator AIMoveToPlayer()
+    {
+        while (!inAttackRange)
+        {
+            UpdateMovement();
+
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        StartCoroutine(AIAttack(enemyData.attackSpeed));
+
+    }
+
+    //TelegraphTime est le temps d'animation possible avant que l'ennemi attaque. Le temps de voir le coup en gros. Après la petite animation de préparation, le coup sera porté.
+    IEnumerator AIAttack(float telegraphTime)
+    {
+        StopCoroutine(AIMoveToPlayer());
+        yield return new WaitForSeconds(telegraphTime);
+        //do attack here après le télégraph
+
+        yield return new WaitForSeconds(1f); //après 0.5sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
+        StartCoroutine(AIMoveToPlayer());
     }
 
 }

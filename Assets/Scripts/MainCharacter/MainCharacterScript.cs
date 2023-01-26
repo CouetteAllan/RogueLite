@@ -54,7 +54,7 @@ public class MainCharacterScript : Entity
     void Update()
     {
         input = playerInputAction.Player.Move.ReadValue<Vector2>();
-        if (input != new Vector2(0,0))
+        if (Mathf.Abs(input.x) > 0.03f && Mathf.Abs(input.y) > 0.03f )
             playerAttackScript.LastInput = input;
         if(input.x > 0.01f && isFlipped)
         {
