@@ -12,6 +12,7 @@ public class EnemyEntity : Entity, IHitSource
 
     private MainCharacterScript player;
     private Vector2 playerPos;
+    private Rigidbody2D playerRB;
     private bool canMove = true;
     private bool inAttackRange;
     public LayerMask playerLayer;
@@ -32,40 +33,21 @@ public class EnemyEntity : Entity, IHitSource
         this.movementSpeed = enemyData.speed;
     }
 
-
     protected override void Start()
     {
         base.Start();
         InitEnemyData();
-        StartCoroutine(AIMoveToPlayer());
+        StartCoroutine(AIFindTarget());
     }
-    void Update()
-    {
-        if (player != null)
-            playerPos = player.GetRigidbody2D().position;
-        else
-        {
-            if (GameManager.Instance.GetPlayer() == null)
-                return;
-            else
-                player = GameManager.Instance.GetPlayer();
-        }
-
-        Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius, playerLayer);
-        if (playerInRange != null)
-        {
-            Debug.Log("En range d'attaque");
-        }   
-
-    }
-
 
     private void UpdateMovement()
     {
         //Un vecteur direction
-        Vector2 direction = this.rb2D.position - playerPos;
+        Vector2 direction = playerRB.position - this.rb2D.position;
         //Une velocité
+        Vector2 movement = direction.normalized * movementSpeed;
 
+        this.rb2D.velocity = movement;
         
     }
 
@@ -95,16 +77,53 @@ public class EnemyEntity : Entity, IHitSource
             Gizmos.DrawWireSphere(this.rb2D.position, enemyData.rangeRadius);
     }
 
+    IEnumerator AIFindTarget()
+    {
+        StopAllCoroutines();
+        player = null;
+        playerRB = null;
+        Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius * 3, playerLayer);
+        if (playerInRange != null)
+        {
+            player = playerInRange.GetComponent<MainCharacterScript>();
+            playerRB = playerInRange.attachedRigidbody;
+            Debug.Log("Ok il est en vu frame 1");
+        }
+        //tant que joueur pas trouvé
+        while (player == null)
+        {
+            playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius * 3, playerLayer);
+            if (playerInRange != null)
+            {
+                player = playerInRange.GetComponent<MainCharacterScript>();
+                playerRB = playerInRange.attachedRigidbody;
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        StartCoroutine(AIMoveToPlayer());
+    }
+
+    IEnumerator AIPatrol()
+    {
+        yield return null;
+    }
     IEnumerator AIMoveToPlayer()
     {
+        StopCoroutine(AIFindTarget());
         while (!inAttackRange)
         {
             UpdateMovement();
-
+            Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position , enemyData.rangeRadius, playerLayer);
+            if (playerInRange != null)
+            {
+                inAttackRange = true;
+                Debug.Log("Ok il est en range");
+            }
 
             yield return new WaitForFixedUpdate();
         }
-
+        inAttackRange = false;
         StartCoroutine(AIAttack(enemyData.attackSpeed));
 
     }
@@ -115,9 +134,24 @@ public class EnemyEntity : Entity, IHitSource
         StopCoroutine(AIMoveToPlayer());
         yield return new WaitForSeconds(telegraphTime);
         //do attack here après le télégraph
-
+        StartAttack();
         yield return new WaitForSeconds(1f); //après 0.5sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
-        StartCoroutine(AIMoveToPlayer());
+        StartCoroutine(AIFindTarget());
+    }
+
+    public void StartAttack()
+    {
+        Collider2D playerInRange = Physics2D.OverlapCircle((this.rb2D.position + player.GetRigidbody2D().position.normalized) * 1.2f, enemyData.rangeRadius / 2, playerLayer);
+        if (playerInRange != null)
+        {
+            player.OnHit(-damage,this);
+            Debug.Log("Ok je l'ai touché");
+        }
+    }
+
+    public void EndAttack()
+    {
+
     }
 
 }

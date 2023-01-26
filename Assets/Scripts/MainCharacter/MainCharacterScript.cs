@@ -114,14 +114,13 @@ public class MainCharacterScript : Entity
 
     public Rigidbody2D GetRigidbody2D()
     {
-        return this.rb2D;
+        return rb2D;
     }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         IHitSource hitSourceObject = collision.GetComponent<IHitSource>();
-        Debug.Log(hitSourceObject);
         if(hitSourceObject != null)
         {
             this.OnHit(-hitSourceObject.Damage, hitSourceObject);
