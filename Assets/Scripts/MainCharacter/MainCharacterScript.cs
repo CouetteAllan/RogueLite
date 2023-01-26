@@ -6,9 +6,6 @@ using UnityEngine.InputSystem;
 public class MainCharacterScript : Entity
 {
    [SerializeField] private Vector2 input;
-   [SerializeField] private Vector2 acceleration;
-   [SerializeField] private Vector2 decceleration;
-   [SerializeField] private Vector2 velocityPower;
 
     public PlayerInputAction playerInputAction;
     private PlayerInput playerInput;
@@ -41,6 +38,7 @@ public class MainCharacterScript : Entity
     {
         base.Start();
         playerInput = GetComponent<PlayerInput>();
+        GameManager.Instance.InitPlayer(this);
 
     }
 
@@ -103,6 +101,11 @@ public class MainCharacterScript : Entity
     public Animator GetAnimator()
     {
         return animator;
+    }
+
+    public Rigidbody2D GetRigidbody2D()
+    {
+        return this.rb2D;
     }
 
 }

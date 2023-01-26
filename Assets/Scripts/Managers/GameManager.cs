@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class GameManager : Singleton<GameManager>
 {
-    public Entity player;
+    public MainCharacterScript player;
 
-    public void InitPlayer()
+    public void InitPlayer(MainCharacterScript player)
     {
-        this.player = GameObject.FindGameObjectWithTag("Player").GetComponent<Entity>();
+        this.player = player;
     }
 
-
+    
 }

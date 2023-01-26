@@ -2,17 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : MonoBehaviour
+public class SpawnManager : Singleton<SpawnManager>
 {
-    // Start is called before the first frame update
-    void Start()
+    public EnemySO[] enemySOs;
+    public EnemyEntity[] enemiesPrefab;
+
+
+    public void SetAllSpawners()
     {
-        
+        foreach (var enemy in enemiesPrefab)
+        {
+            enemy.enemyData = enemySOs[Random.Range(0, 2)];
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+
+    void Start()
     {
-        
+        SetAllSpawners();
     }
 }

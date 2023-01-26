@@ -47,9 +47,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1543b6122507d344ae62eec90273d1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  acceleration: {x: 0.9, y: 0.9}
+  decceleration: {x: 0.18, y: 0.18}
+  velocityPower: {x: 0.5, y: 0.5}
   health: 0
   damage: 0
   movementSpeed: 0
+  pushForce: 5
   animator: {fileID: 3947535519687656691}
   enemyData: {fileID: 11400000, guid: 692ff1e48a200ca46b0900a84eeede81, type: 2}
   graphObject: {fileID: 3947535519687656688}

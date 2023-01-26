@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Entity : MonoBehaviour
 {
+    [SerializeField] protected Vector2 acceleration;
+    [SerializeField] protected Vector2 decceleration;
+    [SerializeField] protected Vector2 velocityPower;
+
     [SerializeField] protected float health;
     [SerializeField] protected float damage;
     [SerializeField] protected float movementSpeed;
@@ -30,8 +34,9 @@ public class Entity : MonoBehaviour
     {
         if (sender != null && _value < 0)
         {
-            Vector2 pushDirection = sender.rb2D.position - this.rb2D.position;
-            this.rb2D.AddForce(pushDirection.normalized * pushForce * 10, ForceMode2D.Impulse);
+            Vector2 pushDirection = this.rb2D.position - sender.rb2D.position;
+            this.rb2D.AddForce(pushDirection.normalized * pushForce, ForceMode2D.Impulse);
+            Debug.Log("JE SUIS POUSSE");
         }
 
         health += _value;
