@@ -12,6 +12,7 @@ public class EnemyEntity : Entity, IHitSource
     private MainCharacterScript player;
     private Vector2 playerPos;
     private bool canMove = true;
+    public LayerMask playerLayer;
 
     public Rigidbody2D SourceRigidbody2D => this.rb2D;
 
@@ -46,25 +47,27 @@ public class EnemyEntity : Entity, IHitSource
             else
                 player = GameManager.Instance.GetPlayer();
         }
+
+        Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius, playerLayer);
+        if (playerInRange != null)
+        {
+            Debug.Log("En range d'attaque");
+            StartCoroutine(WaitForMoving(5f));
+        }   
+
     }
 
     private void FixedUpdate()
     {
         UpdateMovement();
+
+        
     }
 
     private void UpdateMovement()
     {
-        if (canMove == false)
-        {
-            return;
-        }
-        Vector2 targetSpeed = (playerPos - this.rb2D.position).normalized * movementSpeed / 5;
-        var speedDiff = targetSpeed - this.rb2D.velocity;
-        var accelRate = new Vector2(Mathf.Abs(targetSpeed.x) > 0.01f ? acceleration.x : decceleration.x, Mathf.Abs(targetSpeed.y) > 0.01f ? acceleration.y : decceleration.y);
-        var movement = new Vector2(Mathf.Pow(Mathf.Abs(speedDiff.x) * accelRate.x, velocityPower.x) * Mathf.Sign(speedDiff.x), Mathf.Pow(Mathf.Abs(speedDiff.y) * accelRate.y, velocityPower.y) * Mathf.Sign(speedDiff.y));
 
-        this.rb2D.AddForce(movement, ForceMode2D.Impulse);
+        
     }
 
     public float GetHealth()
@@ -85,6 +88,12 @@ public class EnemyEntity : Entity, IHitSource
         canMove = false;
         yield return new WaitForSeconds(seconds);
         canMove = true;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if(rb2D != null)
+            Gizmos.DrawWireSphere(this.rb2D.position, enemyData.rangeRadius);
     }
 
 }

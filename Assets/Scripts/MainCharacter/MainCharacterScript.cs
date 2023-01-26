@@ -9,15 +9,19 @@ public class MainCharacterScript : Entity
 
     public PlayerInputAction playerInputAction;
     private PlayerInput playerInput;
-    public Vector2 mouseAim;
+    [HideInInspector] public Vector2 mouseAim;
 
-    public bool isFlipped = false;
+    [HideInInspector] public bool isFlipped = false;
     private float time = 0f;
 
     private PlayerAttack playerAttackScript;
     private Weapons weaponPickedUpData;
 
-    private bool IsMoving => input != Vector2.zero;
+    private bool isMoving => input != Vector2.zero;
+
+    public bool startWithWeapon = false;
+    [HideInInspector] public Weapons weapon;
+
     
 
     private void Awake()
@@ -39,7 +43,10 @@ public class MainCharacterScript : Entity
         base.Start();
         playerInput = GetComponent<PlayerInput>();
         GameManager.Instance.InitPlayer(this);
-
+        if (startWithWeapon)
+        {
+            PickUpWeapon(weapon);
+        }
     }
 
 
@@ -47,6 +54,8 @@ public class MainCharacterScript : Entity
     void Update()
     {
         input = playerInputAction.Player.Move.ReadValue<Vector2>();
+        if (input != Vector2.zero)
+            playerAttackScript.LastInput = input;
         if(input.x > 0.01f && isFlipped)
         {
             Flip();
@@ -56,7 +65,7 @@ public class MainCharacterScript : Entity
             Flip();
         }
 
-        animator.SetBool("IsMoving", IsMoving);
+        animator.SetBool("IsMoving", isMoving);
     }
 
     private void FixedUpdate()
@@ -83,9 +92,9 @@ public class MainCharacterScript : Entity
 
     }
 
-    public void PickUpWeapon(WeaponObject weapon)
+    public void PickUpWeapon(Weapons weapon)
     {
-        weaponPickedUpData = weapon.weapon;
+        weaponPickedUpData = weapon;
         playerAttackScript.SetActualWeapon(weaponPickedUpData);
         this.damage = weaponPickedUpData.damage;
     }
@@ -131,4 +140,6 @@ public class MainCharacterScript : Entity
         playerInputAction.Player.Attack.performed -= playerAttackScript.OnAttack;
         playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
     }
+
+
 }

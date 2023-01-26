@@ -17,6 +17,7 @@ MonoBehaviour:
   speed: 6
   name: Oui
   damage: 5
+  rangeRadius: 2
   enemySprite: {fileID: 21300000, guid: e77ab9c26f603fb41aea07bc787001e6, type: 3}
   radiusHitBox: 0
   behaviour: 0

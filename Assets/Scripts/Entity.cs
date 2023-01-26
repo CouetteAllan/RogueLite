@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Entity : MonoBehaviour, IHittable
 {
@@ -20,7 +21,8 @@ public class Entity : MonoBehaviour, IHittable
     protected Rigidbody2D rb2D;
     [SerializeField] protected Animator animator;
 
-
+    public delegate void DeathEvent();
+    public DeathEvent OnDeath;
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -52,6 +54,7 @@ public class Entity : MonoBehaviour, IHittable
     {
         isDead = true;
         Destroy(this.gameObject);
+        OnDeath?.Invoke();
     }
 
     public virtual void OnHit(float _value, IHitSource source)

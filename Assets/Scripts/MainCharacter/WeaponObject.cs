@@ -20,7 +20,7 @@ public class WeaponObject : MonoBehaviour
     {
         if(collision.TryGetComponent<MainCharacterScript>(out MainCharacterScript player))
         {
-            player.PickUpWeapon(this);
+            player.PickUpWeapon(this.weapon);
             Destroy(this.gameObject);
         }
     }
