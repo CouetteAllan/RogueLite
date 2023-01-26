@@ -133,20 +133,19 @@ public class PlayerAttack : MonoBehaviour, IHitSource
             {
                 minDistSquared = dSqrToTarget;
                 nearestPos = rbEnemy.position;
-                nearestDir = nearestPos.normalized;
+                nearestDir = nearestPos - currentPos;
             }
 
         }
-        LastInput = nearestDir;
+        LastInput = nearestDir.normalized;
     }
 
     private void GamePadAttackHandle()
     {
-        rb2D.AddForce(LastInput.normalized * pushForceForward, ForceMode2D.Impulse);
+        rb2D.AddForce(LastInput* pushForceForward, ForceMode2D.Impulse);
         hitbox.SetActive(true);
 
-        offset = rb2D.position + LastInput.normalized * 1.5f;
-        Debug.Log(LastInput);
+        offset = rb2D.position + LastInput* 1.5f;
         Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
         foreach (var enemy in enemiesHit)
         {
