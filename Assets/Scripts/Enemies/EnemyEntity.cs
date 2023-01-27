@@ -14,6 +14,7 @@ public class EnemyEntity : Entity, IHitSource
     private Rigidbody2D playerRB;
     private bool canMove = true;
     private bool inAttackRange;
+    private float radiusHitbox;
     private EnemySO.Behaviour behaviour;
     public LayerMask playerLayer;
 
@@ -41,6 +42,7 @@ public class EnemyEntity : Entity, IHitSource
         this.name = enemyData.name;
         this.movementSpeed = enemyData.speed;
         this.behaviour = enemyData.behaviour;
+        this.radiusHitbox = enemyData.radiusHitBox;
     }
 
     protected override void Start()
@@ -59,6 +61,7 @@ public class EnemyEntity : Entity, IHitSource
                 break;
         }
         StartCoroutine(AIFindTarget());
+        GetComponent<CircleCollider2D>().radius = this.radiusHitbox;
        
     }
 

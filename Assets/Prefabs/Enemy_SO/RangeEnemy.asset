@@ -20,6 +20,6 @@ MonoBehaviour:
   rangeRadius: 10
   attackSpeed: 1
   enemySprite: {fileID: 21300000, guid: a04ecc9d5e12d5d449077414eb86635e, type: 3}
-  radiusHitBox: 0
+  radiusHitBox: 1
   behaviour: 0
   projectile: {fileID: 2539103013157138563, guid: 3603554c7b8d6db4899ce58972fd2938, type: 3}

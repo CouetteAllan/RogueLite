@@ -71,10 +71,12 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     public void OnAttack(InputAction.CallbackContext context)
     {
+        if (isAttacking)
+            return;
         //Animation d'attaque
         player.GetAnimator().SetTrigger("Attack");
         rb2D.velocity = Vector2.zero;
-
+        isAttacking = true;
         //la visée est choisit en fonction de la manette ou bien de la souris
         aimingHandle();
     }
@@ -160,7 +162,7 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     {
         //desactive la hitbox en fin d'animation
         hitbox.SetActive(false);
-
+        isAttacking = false;
     }
 
     public void SetActualWeapon(Weapons weapon)
