@@ -6,8 +6,11 @@ using UnityEngine.InputSystem;
 public class MainCharacterScript : Entity
 {
     [SerializeField] private float invincibleTime = 2f;
+    [SerializeField] private float dashInvincibleTime = 1f;
+    [SerializeField] private float dashForce = 1f;
 
     [SerializeField] private Vector2 input;
+    private Vector2 lastInput;
 
     public PlayerInputAction playerInputAction;
     private PlayerInput playerInput;
@@ -24,9 +27,12 @@ public class MainCharacterScript : Entity
     public bool startWithWeapon = false;
     [HideInInspector] public Weapons weapon;
 
+    private bool canMove = true;
+    private bool isInvincible = false;
+
+    private Coroutine invincibleCoroutine;
 
 
-    
 
     private void Awake()
     {
@@ -36,7 +42,7 @@ public class MainCharacterScript : Entity
         playerInputAction.Player.Enable();
         playerInputAction.Player.Attack.performed += playerAttackScript.OnAttack;
         playerInputAction.Player.MouseAim.performed += OnMouseChangePos;
-
+        playerInputAction.Player.Dash.performed += Dash;
     }
 
 
@@ -54,10 +60,19 @@ public class MainCharacterScript : Entity
     }
 
 
+
     // Update is called once per frame
     void Update()
     {
-        input = playerInputAction.Player.Move.ReadValue<Vector2>();
+        if (canMove)
+        {
+            input = playerInputAction.Player.Move.ReadValue<Vector2>();
+            if (Mathf.Abs(input.x) > 0.009f || Mathf.Abs(input.y) > 0.009f)
+            {
+                lastInput = input;
+
+            }
+        }
         if (Mathf.Abs(input.x) > 0.03f && Mathf.Abs(input.y) > 0.03f )
             playerAttackScript.LastInput = input;
         if(input.x > 0.01f && isFlipped)
@@ -87,7 +102,22 @@ public class MainCharacterScript : Entity
         this.rb2D.AddForce(movement,ForceMode2D.Impulse);
     }
 
+    private void Dash(InputAction.CallbackContext context)
+    {
+        if (!canMove)
+            return;
 
+
+        //Invincible
+        if (invincibleCoroutine != null)
+            StopCoroutine(invincibleCoroutine);
+        invincibleCoroutine = StartCoroutine(DashInvincibilityHandle(dashInvincibleTime));
+
+        //Va rapidement dans une direction
+        this.rb2D.AddForce(lastInput.normalized * dashForce,ForceMode2D.Impulse);
+        //Ne peut pas input de direction pendant un certains temps
+        StartCoroutine(CantMoveTimer(0.3f));
+    }
 
     public void Flip()
     {
@@ -153,14 +183,38 @@ public class MainCharacterScript : Entity
     IEnumerator InvincibilityHandle(float time)
     {
         Physics2D.IgnoreLayerCollision(6, 8, true);
+        Physics2D.IgnoreLayerCollision(6, 9, true);
         SpriteRenderer sprite = graphObject.GetComponent<SpriteRenderer>();
 
         sprite.color = new Color(1f, 1f, 1f, 0.4f);
         yield return new WaitForSeconds(time);
         Physics2D.IgnoreLayerCollision(6, 8, false);
+        Physics2D.IgnoreLayerCollision(6, 9, false);
         sprite.color = new Color(1f, 1f, 1f, 1f);
 
         yield break;
+    }
+    
+    IEnumerator DashInvincibilityHandle(float time)
+    {
+        Physics2D.IgnoreLayerCollision(6, 8, true);
+        Physics2D.IgnoreLayerCollision(6, 9, true);
+        SpriteRenderer sprite = graphObject.GetComponent<SpriteRenderer>();
+
+        sprite.color = new Color(1f, 1f, 1f, 0.4f);
+        yield return new WaitForSeconds(time);
+        Physics2D.IgnoreLayerCollision(6, 8, false);
+        Physics2D.IgnoreLayerCollision(6, 9, false);
+        sprite.color = new Color(1f, 1f, 1f, 1f);
+
+        yield break;
+    }
+
+    IEnumerator CantMoveTimer(float timer)
+    {
+        canMove = false;
+        yield return new WaitForSeconds(timer);
+        canMove = true;
     }
 
 }

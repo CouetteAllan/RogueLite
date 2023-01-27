@@ -966,6 +966,8 @@ MonoBehaviour:
   graphObject: {fileID: 1221841675}
   animator: {fileID: 1221841678}
   invincibleTime: 3
+  dashInvincibleTime: 2
+  dashForce: 20
   input: {x: 0, y: 0}
   mouseAim: {x: 0, y: 0}
   isFlipped: 0
