@@ -14,6 +14,7 @@ public class Entity : MonoBehaviour, IHittable
     [SerializeField] protected float movementSpeed;
 
     [SerializeField] protected float pushForce = 10f;
+    [SerializeField] protected GameObject graphObject;
 
     protected bool isDead = false;
 

@@ -73,7 +73,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 4
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -108,6 +108,7 @@ GameObject:
   - component: {fileID: 3947535519687656689}
   - component: {fileID: 3947535519687656691}
   - component: {fileID: 3947535519687656690}
+  - component: {fileID: 5255379762834991403}
   m_Layer: 8
   m_Name: Graph
   m_TagString: Untagged
@@ -202,3 +203,16 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5255379762834991403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947535519687656688}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 851bf70aa377c4a4db166ec8e777585f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemy: {fileID: 3947535518029480717}

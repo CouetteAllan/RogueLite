@@ -378,10 +378,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3947535518029480719, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
-      propertyPath: m_Constraints
-      value: 4
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
 --- !u!1 &700423373
@@ -522,10 +518,6 @@ PrefabInstance:
     - target: {fileID: 3947535518029480718, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3947535518029480719, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
-      propertyPath: m_Constraints
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
@@ -963,7 +955,9 @@ MonoBehaviour:
   damage: 0
   movementSpeed: 7
   pushForce: 9
+  graphObject: {fileID: 1221841675}
   animator: {fileID: 1221841678}
+  invincibleTime: 3
   input: {x: 0, y: 0}
   mouseAim: {x: 0, y: 0}
   isFlipped: 0
@@ -1355,10 +1349,6 @@ PrefabInstance:
     - target: {fileID: 3947535518029480718, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3947535518029480719, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
-      propertyPath: m_Constraints
-      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}

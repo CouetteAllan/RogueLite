@@ -5,7 +5,9 @@ using UnityEngine.InputSystem;
 
 public class MainCharacterScript : Entity
 {
-   [SerializeField] private Vector2 input;
+    [SerializeField] private float invincibleTime = 2f;
+
+    [SerializeField] private Vector2 input;
 
     public PlayerInputAction playerInputAction;
     private PlayerInput playerInput;
@@ -21,6 +23,8 @@ public class MainCharacterScript : Entity
 
     public bool startWithWeapon = false;
     [HideInInspector] public Weapons weapon;
+
+
 
     
 
@@ -127,6 +131,12 @@ public class MainCharacterScript : Entity
         }
     }
 
+    public override void OnHit(float _value, IHitSource source)
+    {
+        base.OnHit(_value, source);
+        StartCoroutine(InvincibilityHandle(invincibleTime));
+    }
+
     public override void Die()
     {
         GameManager.Instance.PlayerDeath();
@@ -140,5 +150,17 @@ public class MainCharacterScript : Entity
         playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
     }
 
+    IEnumerator InvincibilityHandle(float time)
+    {
+        Physics2D.IgnoreLayerCollision(6, 8, true);
+        SpriteRenderer sprite = graphObject.GetComponent<SpriteRenderer>();
+
+        sprite.color = new Color(1f, 1f, 1f, 0.4f);
+        yield return new WaitForSeconds(time);
+        Physics2D.IgnoreLayerCollision(6, 8, false);
+        sprite.color = new Color(1f, 1f, 1f, 1f);
+
+        yield break;
+    }
 
 }

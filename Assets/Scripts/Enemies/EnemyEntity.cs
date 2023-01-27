@@ -6,7 +6,6 @@ using CodeMonkey.Utils;
 public class EnemyEntity : Entity, IHitSource
 {
     public EnemySO enemyData;
-    public GameObject graphObject;
 
     private new string name = "";
 
@@ -21,6 +20,7 @@ public class EnemyEntity : Entity, IHitSource
 
     public float Damage => enemyData.damage;
 
+    private Vector2 lastPlayerPos;
     private void InitEnemyData()
     {
         animator = graphObject.GetComponent<Animator>();
@@ -79,7 +79,6 @@ public class EnemyEntity : Entity, IHitSource
 
     IEnumerator AIFindTarget()
     {
-        StopAllCoroutines();
         player = null;
         playerRB = null;
         Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius * 3, playerLayer);
@@ -87,7 +86,6 @@ public class EnemyEntity : Entity, IHitSource
         {
             player = playerInRange.GetComponent<MainCharacterScript>();
             playerRB = playerInRange.attachedRigidbody;
-            Debug.Log("Ok il est en vu frame 1");
         }
         //tant que joueur pas trouvé
         while (player == null)
@@ -100,8 +98,8 @@ public class EnemyEntity : Entity, IHitSource
             }
             yield return new WaitForSeconds(0.1f);
         }
-
         StartCoroutine(AIMoveToPlayer());
+        yield break;
     }
 
     IEnumerator AIPatrol()
@@ -110,7 +108,6 @@ public class EnemyEntity : Entity, IHitSource
     }
     IEnumerator AIMoveToPlayer()
     {
-        StopCoroutine(AIFindTarget());
         while (!inAttackRange)
         {
             UpdateMovement();
@@ -118,40 +115,53 @@ public class EnemyEntity : Entity, IHitSource
             if (playerInRange != null)
             {
                 inAttackRange = true;
-                Debug.Log("Ok il est en range");
             }
 
             yield return new WaitForFixedUpdate();
         }
         inAttackRange = false;
         StartCoroutine(AIAttack(enemyData.attackSpeed));
+        yield break;
 
     }
 
     //TelegraphTime est le temps d'animation possible avant que l'ennemi attaque. Le temps de voir le coup en gros. Après la petite animation de préparation, le coup sera porté.
     IEnumerator AIAttack(float telegraphTime)
     {
-        StopCoroutine(AIMoveToPlayer());
-        yield return new WaitForSeconds(telegraphTime);
-        //do attack here après le télégraph
-        StartAttack();
-        yield return new WaitForSeconds(1f); //après 0.5sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
+        this.rb2D.velocity = this.rb2D.velocity / 2;
+        lastPlayerPos = playerRB.position;
+        this.animator.SetTrigger("Attack");
+        yield return null;
+        yield return StartCoroutine(WaitForAttack());
+        yield return new WaitForSeconds(1f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
         StartCoroutine(AIFindTarget());
+        yield break;
     }
 
     public void StartAttack()
     {
-        Collider2D playerInRange = Physics2D.OverlapCircle((this.rb2D.position + player.GetRigidbody2D().position.normalized) * 1.2f, enemyData.rangeRadius / 2, playerLayer);
+        Collider2D playerInRange = Physics2D.OverlapCircle((this.rb2D.position + lastPlayerPos.normalized) * 1.2f, enemyData.rangeRadius / 2, playerLayer);
         if (playerInRange != null)
         {
             player.OnHit(-damage,this);
-            Debug.Log("Ok je l'ai touché");
         }
     }
 
-    public void EndAttack()
+
+    private bool endAttack = false;
+    IEnumerator WaitForAttack()
     {
 
+        while (!endAttack)
+        {
+            yield return null;
+        }
+        endAttack = false;
+        yield break;
+    }
+    public void EndAttack()
+    {
+        endAttack = true;
     }
 
 }
