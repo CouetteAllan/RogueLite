@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef985af0436e31b45b749b55606cd049, type: 3}
-  m_Name: LittleEnemy
+  m_Name: RangeEnemy
   m_EditorClassIdentifier: 
-  health: 15
+  health: 20
   animator: {fileID: 9100000, guid: 09f9a8f2364a7bf418bb227c79e6f4a6, type: 2}
-  speed: 6
-  name: Oui
-  damage: 5
-  rangeRadius: 2
+  speed: 10
+  name: Ranged
+  damage: 6
+  rangeRadius: 10
   attackSpeed: 1
-  enemySprite: {fileID: 21300000, guid: e77ab9c26f603fb41aea07bc787001e6, type: 3}
+  enemySprite: {fileID: 21300000, guid: a04ecc9d5e12d5d449077414eb86635e, type: 3}
   radiusHitBox: 0
-  behaviour: 1
+  behaviour: 0
