@@ -254,7 +254,7 @@ public class EnemyEntity : Entity, IHitSource
     {
         //instancier un projectile dans la direction du player.
         GameObject projectile = Instantiate(enemyData.projectile, this.rb2D.position, Quaternion.identity);
-        projectile.GetComponent<ProjectileScript>().SetDirectionAndSpeed(playerRB.position.normalized, 8f);
+        projectile.GetComponent<ProjectileScript>().SetDirectionAndSpeed((playerRB.position - this.rb2D.position).normalized, 8f);
     }
 
 

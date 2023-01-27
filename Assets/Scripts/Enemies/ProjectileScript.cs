@@ -36,6 +36,18 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
         if(collision.TryGetComponent<IHittable>(out IHittable hitObject))
         {
             hitObject.OnHit(Damage, this);
+            Destroy(this.gameObject);
         }
+    }
+
+    IEnumerator Lifespan(float lifeSpan)
+    {
+        yield return new WaitForSeconds(lifeSpan);
+        Destroy(this.gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 }
