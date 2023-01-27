@@ -8,7 +8,7 @@ public class AnimationScriptSynchroEnemy : MonoBehaviour
     [SerializeField] private EnemyEntity enemy;
     public void StartAttack()
     {
-        enemy.StartAttack();
+        enemy.startAttack();
     }
 
     public void EndAttack()

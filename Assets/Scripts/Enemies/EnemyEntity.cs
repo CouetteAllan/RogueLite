@@ -20,6 +20,9 @@ public class EnemyEntity : Entity, IHitSource
     private delegate void MovementType();
     private MovementType updateMovement;
 
+    public delegate void AttackType();
+    public AttackType startAttack;
+
     public Rigidbody2D SourceRigidbody2D => this.rb2D;
 
     public float Damage => enemyData.damage;
@@ -44,16 +47,19 @@ public class EnemyEntity : Entity, IHitSource
     {
         base.Start();
         InitEnemyData();
-        StartCoroutine(AIFindTarget());
         switch (behaviour)
         {
             case EnemySO.Behaviour.Melee:
                 updateMovement = UpdateMovementTowardPlayer;
+                startAttack = StartMeleeAttack;
                 break;
             case EnemySO.Behaviour.Ranged:
                 updateMovement = UpdateMovementRunAwayFromPlayer;
+                startAttack = StartRangedAttack;
                 break;
         }
+        StartCoroutine(AIFindTarget());
+       
     }
 
     private void UpdateMovementTowardPlayer()
@@ -104,6 +110,8 @@ public class EnemyEntity : Entity, IHitSource
             Gizmos.DrawWireSphere(this.rb2D.position, enemyData.rangeRadius);
     }
 
+    #region AITasks
+
     IEnumerator AIFindTarget()
     {
         player = null;
@@ -121,14 +129,14 @@ public class EnemyEntity : Entity, IHitSource
                 }
                 //cours vers le joueur;
                 break;
-            case EnemySO.Behaviour.Ranged:
+            /*case EnemySO.Behaviour.Ranged:
                 playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius - 1f, playerLayer); //joueur trop proche ! il faut fuir
                 if (playerInRange != null)
                 {
                     player = playerInRange.GetComponent<MainCharacterScript>();
                     playerRB = playerInRange.attachedRigidbody;
                 }
-                break;
+                break;*/
         }
 
 
@@ -151,6 +159,7 @@ public class EnemyEntity : Entity, IHitSource
                 //cours vers le joueur;
                 break;
             case EnemySO.Behaviour.Ranged:
+                StartCoroutine(AIMoveInRange(enemyData.rangeRadius));
                 //fuis le joueur ou du moins va en range d'attaque à distance
                 break;
         }
@@ -186,7 +195,7 @@ public class EnemyEntity : Entity, IHitSource
         while (!inAttackRange)
         {
             UpdateMovementTowardPlayer();
-            Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius, playerLayer);
+            Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, range, playerLayer);
             if (playerInRange != null)
             {
                 inAttackRange = true;
@@ -229,8 +238,8 @@ public class EnemyEntity : Entity, IHitSource
         StartCoroutine(AIFindTarget());
         yield break;
     }
-
-    public void StartAttack()
+    #endregion
+    public void StartMeleeAttack()
     {
         Collider2D playerInRange = Physics2D.OverlapCircle((this.rb2D.position + lastPlayerPos.normalized) * 1.2f, enemyData.rangeRadius / 2, playerLayer);
         particle.transform.position = this.rb2D.position + lastPlayerPos.normalized;
@@ -239,6 +248,13 @@ public class EnemyEntity : Entity, IHitSource
         {
             player.OnHit(-damage,this);
         }
+    }
+
+    public void StartRangedAttack()
+    {
+        //instancier un projectile dans la direction du player.
+        GameObject projectile = Instantiate(enemyData.projectile, this.rb2D.position, Quaternion.identity);
+        projectile.GetComponent<ProjectileScript>().SetDirectionAndSpeed(playerRB.position.normalized, 8f);
     }
 
 
@@ -259,8 +275,4 @@ public class EnemyEntity : Entity, IHitSource
     }
 
 
-    public void ParticleAttackEffect()
-    {
-
-    }
 }

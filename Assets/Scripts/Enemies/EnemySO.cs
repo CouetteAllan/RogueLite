@@ -27,4 +27,6 @@ public class EnemySO : ScriptableObject
 
     public Behaviour behaviour;
 
+    public GameObject projectile;
+
 }
