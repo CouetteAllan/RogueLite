@@ -29,9 +29,10 @@ public class MainCharacterScript : Entity
     [HideInInspector] public Weapons weapon;
 
     private bool canMove = true;
-    private bool isInvincible = false;
 
     private Coroutine invincibleCoroutine;
+    public delegate void PlayerChangeHealth(float value);
+    public PlayerChangeHealth OnPlayerChangeHealth;
 
 
 
@@ -59,6 +60,9 @@ public class MainCharacterScript : Entity
             PickUpWeapon(weapon);
         }
         trail.emitting = false;
+        health = maxHealth;
+        UIManager.Instance.SetMaxHealth(maxHealth,this);
+        UIManager.Instance.SetUIHealth(maxHealth);
     }
 
 
@@ -168,7 +172,11 @@ public class MainCharacterScript : Entity
 
     public override void OnHit(float _value, IHitSource source)
     {
+        if (isInvincible)
+            return;
+
         base.OnHit(_value, source);
+        OnPlayerChangeHealth(health + _value);
         StartCoroutine(InvincibilityHandle(invincibleTime));
     }
 
@@ -187,8 +195,10 @@ public class MainCharacterScript : Entity
 
     IEnumerator InvincibilityHandle(float time)
     {
+        isInvincible = true;
         Physics2D.IgnoreLayerCollision(6, 8, true);
         Physics2D.IgnoreLayerCollision(6, 9, true);
+        Debug.Log("La collision entre le player et le projectile est ignorée: " + Physics2D.GetIgnoreLayerCollision(6, 9));
         SpriteRenderer sprite = graphObject.GetComponent<SpriteRenderer>();
 
         sprite.color = new Color(1f, 1f, 1f, 0.4f);
@@ -196,12 +206,14 @@ public class MainCharacterScript : Entity
         Physics2D.IgnoreLayerCollision(6, 8, false);
         Physics2D.IgnoreLayerCollision(6, 9, false);
         sprite.color = new Color(1f, 1f, 1f, 1f);
-
+        isInvincible = false;
         yield break;
     }
     
     IEnumerator DashInvincibilityHandle(float time)
     {
+        isInvincible = true;
+
         Physics2D.IgnoreLayerCollision(6, 8, true);
         Physics2D.IgnoreLayerCollision(6, 9, true);
         SpriteRenderer sprite = graphObject.GetComponent<SpriteRenderer>();
@@ -211,6 +223,7 @@ public class MainCharacterScript : Entity
         Physics2D.IgnoreLayerCollision(6, 8, false);
         Physics2D.IgnoreLayerCollision(6, 9, false);
         sprite.color = new Color(1f, 1f, 1f, 1f);
+        isInvincible = false;
 
         yield break;
     }

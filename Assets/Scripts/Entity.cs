@@ -10,6 +10,7 @@ public class Entity : MonoBehaviour, IHittable
     [SerializeField] protected Vector2 velocityPower;
 
     [SerializeField] protected float health;
+    [SerializeField] protected float maxHealth;
     [SerializeField] protected float damage;
     [SerializeField] protected float movementSpeed;
 
@@ -27,6 +28,8 @@ public class Entity : MonoBehaviour, IHittable
 
     public delegate void OnHitEvent();
     public OnHitEvent EventOnHit;
+    protected bool isInvincible = false;
+    public bool IsInvincible { get => isInvincible; }
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -47,9 +50,9 @@ public class Entity : MonoBehaviour, IHittable
                 this.rb2D.AddForce(pushDirection.normalized * pushForce, ForceMode2D.Impulse);
             }
         }
-        
 
-        health += _value;
+        health = Mathf.Clamp(health += _value, 0, maxHealth);
+
         if (health <= 0)
             this.Die();
     }

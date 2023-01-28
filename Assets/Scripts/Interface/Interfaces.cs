@@ -6,6 +6,8 @@ using UnityEngine;
 public interface IHittable
 {
     void OnHit(float _value, IHitSource source);
+
+    bool IsInvincible { get; }
 }
 
 public interface IPickable

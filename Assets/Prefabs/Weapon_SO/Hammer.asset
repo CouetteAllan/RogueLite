@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Hammer
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 4e27c8f5b04a60e4287a116b84db7fb2, type: 3}
-  damage: 10
+  damage: 5
   attackRate: 1
   range: 15
   weaponName: Hammer
