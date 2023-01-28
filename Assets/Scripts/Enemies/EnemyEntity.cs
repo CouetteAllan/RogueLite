@@ -17,6 +17,7 @@ public class EnemyEntity : Entity, IHitSource
     private float radiusHitbox;
     private EnemySO.Behaviour behaviour;
     public LayerMask playerLayer;
+    private bool isFlipped = false;
 
     private delegate void MovementType();
     private MovementType updateMovement;
@@ -103,6 +104,7 @@ public class EnemyEntity : Entity, IHitSource
     public IEnumerator WaitForMoving(float seconds)
     {
         canMove = false;
+        animator.SetBool("IsMoving", canMove);
         yield return new WaitForSeconds(seconds);
         canMove = true;
     }
@@ -111,6 +113,13 @@ public class EnemyEntity : Entity, IHitSource
     {
         if(rb2D != null)
             Gizmos.DrawWireSphere(this.rb2D.position, enemyData.rangeRadius);
+    }
+
+    public void Flip()
+    {
+        isFlipped = !isFlipped;
+        this.transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+
     }
 
     #region AITasks
@@ -175,6 +184,7 @@ public class EnemyEntity : Entity, IHitSource
     }
     IEnumerator AIMoveToPlayer()
     {
+        animator.SetBool("IsMoving", canMove);
         while (!inAttackRange)
         {
             updateMovement();
@@ -195,6 +205,7 @@ public class EnemyEntity : Entity, IHitSource
 
     IEnumerator AIMoveInRange(float range)
     {
+        animator.SetBool("IsMoving", canMove);
         while (!inAttackRange)
         {
             UpdateMovementTowardPlayer();
@@ -233,10 +244,12 @@ public class EnemyEntity : Entity, IHitSource
     //TelegraphTime est le temps d'animation possible avant que l'ennemi attaque. Le temps de voir le coup en gros. Après la petite animation de préparation, le coup sera porté.
     IEnumerator AIAttack()
     {
+        animator.SetBool("IsMoving", false);
         this.rb2D.velocity = this.rb2D.velocity / 2;
         this.animator.SetTrigger("Attack");
         yield return null;
         yield return StartCoroutine(WaitForAttack());
+        endAttack = false;
         yield return new WaitForSeconds(1f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
         StartCoroutine(AIFindTarget());
         yield break;
@@ -244,13 +257,29 @@ public class EnemyEntity : Entity, IHitSource
     #endregion
     public void StartMeleeAttack()
     {
-        Collider2D playerInRange = Physics2D.OverlapCircle((this.rb2D.position + lastPlayerPos.normalized) * 1.2f, enemyData.rangeRadius / 2, playerLayer);
+        StartCoroutine(ActiveFrameAttack());
         particle.transform.position = this.rb2D.position + lastPlayerPos.normalized;
         particle.GetComponent<ParticleSystem>().Play();
-        if (playerInRange != null)
+    }
+    IEnumerator ActiveFrameAttack()
+    {
+        bool playerHitOnce = false;
+        while (!endAttack)
         {
-            player.OnHit(-damage,this);
+            if (!playerHitOnce)
+            {
+                Collider2D playerInRange = Physics2D.OverlapCircle((this.rb2D.position + lastPlayerPos.normalized) * 1.2f, enemyData.rangeRadius / 2, playerLayer);
+                if (playerInRange != null)
+                {
+                    player.OnHit(-damage, this);
+                    playerHitOnce = true;
+                }
+            }
+            yield return null;  
         }
+        Debug.Log("il continue d'attaqquer");
+        yield break;
+
     }
 
     public void StartRangedAttack()
@@ -269,7 +298,6 @@ public class EnemyEntity : Entity, IHitSource
         {
             yield return null;
         }
-        endAttack = false;
         yield break;
     }
     public void EndAttack()

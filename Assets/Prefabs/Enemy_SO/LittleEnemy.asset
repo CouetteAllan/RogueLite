@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: LittleEnemy
   m_EditorClassIdentifier: 
   health: 15
-  animator: {fileID: 9100000, guid: 09f9a8f2364a7bf418bb227c79e6f4a6, type: 2}
+  animator: {fileID: 9100000, guid: 6b08f41d27c64b14cacf1259544fd824, type: 2}
   speed: 6
   name: Oui
   damage: 5
   rangeRadius: 2
   attackSpeed: 1
-  enemySprite: {fileID: 21300000, guid: e77ab9c26f603fb41aea07bc787001e6, type: 3}
+  enemySprite: {fileID: 580100881, guid: d9c99eb1291dcfc488e4c5a67732cbeb, type: 3}
   radiusHitBox: 0.5
   behaviour: 1
   projectile: {fileID: 0}
