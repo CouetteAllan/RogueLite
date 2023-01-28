@@ -8,6 +8,7 @@ public class MainCharacterScript : Entity
     [SerializeField] private float invincibleTime = 2f;
     [SerializeField] private float dashInvincibleTime = 1f;
     [SerializeField] private float dashForce = 1f;
+    [SerializeField] private TrailRenderer trail;
 
     [SerializeField] private Vector2 input;
     private Vector2 lastInput;
@@ -57,6 +58,7 @@ public class MainCharacterScript : Entity
         {
             PickUpWeapon(weapon);
         }
+        trail.emitting = false;
     }
 
 
@@ -115,6 +117,9 @@ public class MainCharacterScript : Entity
 
         //Va rapidement dans une direction
         this.rb2D.AddForce(lastInput.normalized * dashForce,ForceMode2D.Impulse);
+        trail.emitting = true;
+
+
         //Ne peut pas input de direction pendant un certains temps
         StartCoroutine(CantMoveTimer(0.3f));
     }
@@ -215,6 +220,9 @@ public class MainCharacterScript : Entity
         canMove = false;
         yield return new WaitForSeconds(timer);
         canMove = true;
+        trail.emitting = false;
+
+
     }
 
 }

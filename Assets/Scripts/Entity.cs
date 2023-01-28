@@ -25,6 +25,9 @@ public class Entity : MonoBehaviour, IHittable
     public delegate void DeathEvent();
     public DeathEvent OnDeath;
 
+    public delegate void OnHitEvent();
+    public OnHitEvent EventOnHit;
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -61,5 +64,6 @@ public class Entity : MonoBehaviour, IHittable
     public virtual void OnHit(float _value, IHitSource source)
     {
         ChangeHealth(_value,source);
+        EventOnHit?.Invoke();
     }
 }

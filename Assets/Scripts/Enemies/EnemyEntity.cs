@@ -46,6 +46,11 @@ public class EnemyEntity : Entity, IHitSource
         this.radiusHitbox = enemyData.radiusHitBox;
     }
 
+    private void Awake()
+    {
+        this.EventOnHit += GotCanceled;
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -74,6 +79,13 @@ public class EnemyEntity : Entity, IHitSource
         Vector2 movement = direction.normalized * movementSpeed / 2;
 
         this.rb2D.velocity = movement;
+
+        if(isFlipped && rb2D.velocity.x > 0.01f)
+            Flip();
+
+        if(!isFlipped && rb2D.velocity.x < -0.01f)
+            Flip();
+
         
     }
 
@@ -249,7 +261,7 @@ public class EnemyEntity : Entity, IHitSource
         this.animator.SetTrigger("Attack");
         yield return null;
         yield return StartCoroutine(WaitForAttack());
-        endAttack = false;
+        gotCanceled = false;
         yield return new WaitForSeconds(1f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
         StartCoroutine(AIFindTarget());
         yield break;
@@ -257,8 +269,9 @@ public class EnemyEntity : Entity, IHitSource
     #endregion
     public void StartMeleeAttack()
     {
+        this.rb2D.AddForce((lastPlayerPos - this.rb2D.position).normalized * 2,ForceMode2D.Impulse);
         StartCoroutine(ActiveFrameAttack());
-        particle.transform.position = this.rb2D.position + lastPlayerPos.normalized;
+        particle.transform.position = (lastPlayerPos - this.rb2D.position ) + this.rb2D.position;
         particle.GetComponent<ParticleSystem>().Play();
     }
     IEnumerator ActiveFrameAttack()
@@ -268,16 +281,18 @@ public class EnemyEntity : Entity, IHitSource
         {
             if (!playerHitOnce)
             {
-                Collider2D playerInRange = Physics2D.OverlapCircle((this.rb2D.position + lastPlayerPos.normalized) * 1.2f, enemyData.rangeRadius / 2, playerLayer);
+                Collider2D playerInRange = Physics2D.OverlapCircle((lastPlayerPos - this.rb2D.position) + this.rb2D.position, enemyData.rangeRadius / 2, playerLayer);
                 if (playerInRange != null)
                 {
                     player.OnHit(-damage, this);
                     playerHitOnce = true;
                 }
             }
-            yield return null;  
+            yield return new WaitForSeconds(0.15f);
+
         }
-        Debug.Log("il continue d'attaqquer");
+        endAttack = false;
+        Debug.Log("Les frames actives ne sont plus");
         yield break;
 
     }
@@ -291,10 +306,11 @@ public class EnemyEntity : Entity, IHitSource
 
 
     private bool endAttack = false;
+    private bool gotCanceled = false;
     IEnumerator WaitForAttack()
     {
 
-        while (!endAttack)
+        while (!endAttack && !gotCanceled)
         {
             yield return null;
         }
@@ -305,5 +321,9 @@ public class EnemyEntity : Entity, IHitSource
         endAttack = true;
     }
 
+    private void GotCanceled()
+    {
+        gotCanceled = true;
+    }
 
 }
