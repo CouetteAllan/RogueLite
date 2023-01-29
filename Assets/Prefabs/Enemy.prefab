@@ -4880,6 +4880,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3947535518029480718}
   - component: {fileID: 3947535518029480717}
+  - component: {fileID: 7042258903046089056}
   - component: {fileID: 3947535518029480719}
   - component: {fileID: 6566361704658836237}
   - component: {fileID: 2073726727}
@@ -4923,6 +4924,7 @@ MonoBehaviour:
   decceleration: {x: 1, y: 1}
   velocityPower: {x: 0.5, y: 0.5}
   health: 0
+  maxHealth: 0
   damage: 0
   movementSpeed: 0
   pushForce: 5
@@ -4933,6 +4935,22 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   particle: {fileID: 1177397214925645473}
+--- !u!114 &7042258903046089056
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3947535518029480716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 747b9cdf0a4b28c45b8fa169283b69d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemToDrop:
+  - {fileID: 11400000, guid: 8f290897450c5bf4085f401c9e23abcd, type: 2}
+  - {fileID: 11400000, guid: 8f290897450c5bf4085f401c9e23abcd, type: 2}
+  itemPrefab: {fileID: 6646794710163924282, guid: c09e2cb372d496d4185d034b0f386863, type: 3}
 --- !u!50 &3947535518029480719
 Rigidbody2D:
   serializedVersion: 4
@@ -4952,7 +4970,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &6566361704658836237
 CircleCollider2D:

@@ -35,6 +35,10 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     public Rigidbody2D SourceRigidbody2D => this.rb2D;
     public float Damage => actualWeapon.damage;
+
+    public bool IsDead => false;
+
+    private Coroutine attackCoroutine;
     void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
@@ -119,7 +123,7 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     private void GamePadAimingHandle()
     {
-        Collider2D[] enemiesInFront = Physics2D.OverlapCircleAll(rb2D.position + LastInput.normalized * 1.7f, 2, layerAttack);
+        Collider2D[] enemiesInFront = Physics2D.OverlapCircleAll(rb2D.position + LastInput.normalized * 1.7f, 2.4f, layerAttack);
         Vector2 nearestDir = LastInput;
         Vector2 nearestPos;
         float minDistSquared = Mathf.Infinity;
@@ -144,20 +148,42 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     private void GamePadAttackHandle()
     {
-        rb2D.AddForce(LastInput* pushForceForward, ForceMode2D.Impulse);
+        rb2D.AddForce(LastInput * pushForceForward, ForceMode2D.Impulse);
         hitbox.SetActive(true);
 
-        offset = rb2D.position + LastInput* 1.5f;
-        Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
-        foreach (var enemy in enemiesHit)
-        {
-            IHittable hitObject = enemy.GetComponent<EnemyEntity>();
-            hitObject.OnHit(-actualWeapon.damage, this);
-        }
+        offset = rb2D.position + LastInput * 1.5f;
 
+        if (attackCoroutine != null)
+            StopCoroutine(attackCoroutine);
+        attackCoroutine = StartCoroutine(ActiveFrameAttack());
         hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
     }
 
+    IEnumerator ActiveFrameAttack()
+    {
+        Collider2D[] enemiesHit = null;
+        while (isAttacking)
+        {
+            enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
+            foreach (var enemy in enemiesHit)
+            {
+                IHittable hitObject = enemy.GetComponent<EnemyEntity>();
+                hitObject.OnHit(-actualWeapon.damage, this);
+                hitObject.IsInvincible = true;
+            }
+            yield return new WaitForSeconds(0.05f);
+        }
+        if (enemiesHit != null)
+        {
+            foreach (var enemy in enemiesHit)
+            {
+                IHittable hitObject = enemy.GetComponent<EnemyEntity>();
+                hitObject.IsInvincible = false;
+            }
+        }
+        yield break;
+
+    }
     public void DeActivateHitBox()
     {
         //desactive la hitbox en fin d'animation

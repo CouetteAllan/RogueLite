@@ -80,7 +80,7 @@ public class MainCharacterScript : Entity
             }
         }
         if (Mathf.Abs(input.x) > 0.03f && Mathf.Abs(input.y) > 0.03f )
-            playerAttackScript.LastInput = input;
+            playerAttackScript.LastInput = lastInput;
         if(input.x > 0.01f && isFlipped)
         {
             Flip();
@@ -166,20 +166,29 @@ public class MainCharacterScript : Entity
         IHitSource hitSourceObject = collision.GetComponent<IHitSource>();
         if(hitSourceObject != null)
         {
-            this.OnHit(-hitSourceObject.Damage, hitSourceObject);
+            if(!hitSourceObject.IsDead)
+                this.OnHit(-hitSourceObject.Damage, hitSourceObject);
+        }
+
+        IPickable pickable = collision.GetComponent<IPickable>();
+        if(pickable != null)
+        {
+            pickable.OnPick(this);
         }
     }
 
     public override void OnHit(float _value, IHitSource source)
     {
-        if (isInvincible)
-            return;
 
         base.OnHit(_value, source);
-        OnPlayerChangeHealth(health + _value);
         StartCoroutine(InvincibilityHandle(invincibleTime));
     }
 
+    public override void ChangeHealth(float _value, IHitSource source = null)
+    {
+        base.ChangeHealth(_value, source);
+        OnPlayerChangeHealth(health + _value);
+    }
     public override void Die()
     {
         GameManager.Instance.PlayerDeath();
@@ -198,10 +207,9 @@ public class MainCharacterScript : Entity
         isInvincible = true;
         Physics2D.IgnoreLayerCollision(6, 8, true);
         Physics2D.IgnoreLayerCollision(6, 9, true);
-        Debug.Log("La collision entre le player et le projectile est ignorée: " + Physics2D.GetIgnoreLayerCollision(6, 9));
         SpriteRenderer sprite = graphObject.GetComponent<SpriteRenderer>();
+        sprite.color = new Color(1f, 1f, 1f, 0f);
 
-        sprite.color = new Color(1f, 1f, 1f, 0.4f);
         yield return new WaitForSeconds(time);
         Physics2D.IgnoreLayerCollision(6, 8, false);
         Physics2D.IgnoreLayerCollision(6, 9, false);

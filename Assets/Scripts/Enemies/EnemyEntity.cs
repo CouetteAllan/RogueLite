@@ -29,6 +29,8 @@ public class EnemyEntity : Entity, IHitSource
 
     public float Damage => enemyData.damage;
 
+    public bool IsDead => isDead;
+
     private Vector2 lastPlayerPos;
 
     [SerializeField] private GameObject particle;
@@ -38,7 +40,8 @@ public class EnemyEntity : Entity, IHitSource
         this.animator.runtimeAnimatorController = enemyData.animator;
         graphObject.GetComponent<SpriteRenderer>().sprite = enemyData.enemySprite;
 
-        this.health = enemyData.health;
+        this.maxHealth = enemyData.health;
+        this.health = maxHealth;
         this.damage = enemyData.damage;
         this.name = enemyData.name;
         this.movementSpeed = enemyData.speed;
@@ -49,6 +52,7 @@ public class EnemyEntity : Entity, IHitSource
     private void Awake()
     {
         this.EventOnHit += GotCanceled;
+        this.OnDeath += StopAllCoroutines;
     }
 
     protected override void Start()
@@ -109,7 +113,10 @@ public class EnemyEntity : Entity, IHitSource
     {
 
         StartCoroutine(WaitForMoving(0.2f));
+        Debug.Log("Actual Health" + health + "dégâts du coup: " + _value);
         base.OnHit(_value, source);
+        Debug.Log("Health après coup: " + health);
+
 
     }
 
@@ -292,7 +299,6 @@ public class EnemyEntity : Entity, IHitSource
 
         }
         endAttack = false;
-        Debug.Log("Les frames actives ne sont plus");
         yield break;
 
     }

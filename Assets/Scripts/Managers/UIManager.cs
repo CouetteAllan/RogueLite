@@ -63,7 +63,7 @@ public class UIManager : Singleton<UIManager>
         float t = 0;
         while (t < 1)
         {
-            playerHealth = Mathf.Lerp(start, target, t);
+            playerHealth = Mathf.Clamp(Mathf.Lerp(start, target, t), 0, playerMaxHealth);
             h_Txt.text = playerHealth.ToString("#") + "/" + playerMaxHealth.ToString("#");
             t = t + Time.deltaTime / timeToMove;
             yield return null;

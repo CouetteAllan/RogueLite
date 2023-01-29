@@ -29,7 +29,7 @@ public class Entity : MonoBehaviour, IHittable
     public delegate void OnHitEvent();
     public OnHitEvent EventOnHit;
     protected bool isInvincible = false;
-    public bool IsInvincible { get => isInvincible; }
+    public bool IsInvincible { get => isInvincible; set => isInvincible = value; }
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -39,7 +39,7 @@ public class Entity : MonoBehaviour, IHittable
 
     // Update is called once per frame
 
-    public virtual void ChangeHealth(float _value, IHitSource source)
+    public virtual void ChangeHealth(float _value, IHitSource source = null)
     {
         if(_value < 0)
         {
@@ -60,13 +60,38 @@ public class Entity : MonoBehaviour, IHittable
     public virtual void Die()
     {
         isDead = true;
-        Destroy(this.gameObject);
         OnDeath?.Invoke();
+        StopAllCoroutines();
+        StartCoroutine(DeathCoroutine());
+    }
+
+    IEnumerator DeathCoroutine()
+    {
+        this.animator.enabled = false;
+        Quaternion targetRotation = new Quaternion(0, 0, -90, 0);
+        float t = 0f;
+        while (t <= 1.5f)
+        {
+            t += Time.deltaTime;
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation,  Time.deltaTime * 0.2f);
+
+            yield return null;
+        }
+        this.transform.rotation = targetRotation;
+        yield return new WaitForSeconds(0.2f);
+        Destroy(this.gameObject);
     }
 
     public virtual void OnHit(float _value, IHitSource source)
     {
+        if (isInvincible)
+            return;
         ChangeHealth(_value,source);
         EventOnHit?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
     }
 }

@@ -12,7 +12,9 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
 
     public float Damage => projectileDamage;
 
-    public bool IsInvincible => false;
+    public bool IsInvincible { get => false; set => throw null; }
+
+    public bool IsDead => false;
 
     private void Start()
     {

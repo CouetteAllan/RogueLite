@@ -7,7 +7,7 @@ public interface IHittable
 {
     void OnHit(float _value, IHitSource source);
 
-    bool IsInvincible { get; }
+    bool IsInvincible { get; set; }
 }
 
 public interface IPickable
@@ -19,4 +19,6 @@ public interface IHitSource
 {
     Rigidbody2D SourceRigidbody2D { get; }
     float Damage { get; }
+
+    bool IsDead { get; }
 }
