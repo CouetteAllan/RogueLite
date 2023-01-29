@@ -55,6 +55,9 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         playerInput = GetComponent<PlayerInput>();
 
         playerInput.onControlsChanged += PlayerInput_onControlsChanged;
+
+        attackSpeed = actualWeapon.attackRate;
+        player.GetAnimator().SetFloat("AttackSpeedModifier", attackSpeed);
     }
 
     private void PlayerInput_onControlsChanged(PlayerInput obj)
@@ -148,10 +151,10 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     private void GamePadAttackHandle()
     {
-        rb2D.AddForce(LastInput * pushForceForward, ForceMode2D.Impulse);
+        rb2D.AddForce(LastInput.normalized * pushForceForward, ForceMode2D.Impulse);
         hitbox.SetActive(true);
 
-        offset = rb2D.position + LastInput * 1.5f;
+        offset = rb2D.position + LastInput.normalized * 1.5f;
 
         if (attackCoroutine != null)
             StopCoroutine(attackCoroutine);

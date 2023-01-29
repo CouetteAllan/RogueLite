@@ -1772,6 +1772,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3752699502455542832, guid: 3255a9173ac36d64aaf18034dcd048f5, type: 3}
+      propertyPath: dashCooldown
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 3752699502455542833, guid: 3255a9173ac36d64aaf18034dcd048f5, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -1819,6 +1823,18 @@ PrefabInstance:
     - target: {fileID: 3752699502455542839, guid: 3255a9173ac36d64aaf18034dcd048f5, type: 3}
       propertyPath: m_Name
       value: MainCharacter
+      objectReference: {fileID: 0}
+    - target: {fileID: 3752699502802010573, guid: 3255a9173ac36d64aaf18034dcd048f5, type: 3}
+      propertyPath: m_Color.b
+      value: 0.2629973
+      objectReference: {fileID: 0}
+    - target: {fileID: 3752699502802010573, guid: 3255a9173ac36d64aaf18034dcd048f5, type: 3}
+      propertyPath: m_Color.g
+      value: 0.020024918
+      objectReference: {fileID: 0}
+    - target: {fileID: 3752699502802010573, guid: 3255a9173ac36d64aaf18034dcd048f5, type: 3}
+      propertyPath: m_Color.r
+      value: 0.2830189
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3255a9173ac36d64aaf18034dcd048f5, type: 3}

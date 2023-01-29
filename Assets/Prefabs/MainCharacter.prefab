@@ -191,17 +191,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: {x: 3, y: 3}
   decceleration: {x: 0.18, y: 0.18}
-  velocityPower: {x: 0.4, y: 0.4}
+  velocityPower: {x: 0.6, y: 0.6}
   health: 100
   maxHealth: 100
   damage: 0
   movementSpeed: 7
-  pushForce: 9
+  pushForce: 28
   graphObject: {fileID: 3752699502146245631}
   animator: {fileID: 3752699502146245626}
   invincibleTime: 2.5
-  dashInvincibleTime: 2
+  dashInvincibleTime: 1
   dashForce: 20
+  dashCooldown: 0.8
   trail: {fileID: 3752699502704651482}
   input: {x: 0, y: 0}
   mouseAim: {x: 0, y: 0}
@@ -221,7 +222,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0.33
+  m_LinearDrag: 7
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -339,7 +340,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0}
   hitbox: {fileID: 3752699502802010563}
   isAttacking: 0
-  pushForceForward: 5
+  pushForceForward: 3
 --- !u!70 &3752699502455542846
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

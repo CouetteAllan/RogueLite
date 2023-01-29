@@ -8,6 +8,9 @@ public class MainCharacterScript : Entity
     [SerializeField] private float invincibleTime = 2f;
     [SerializeField] private float dashInvincibleTime = 1f;
     [SerializeField] private float dashForce = 1f;
+    private bool isDashing = false;
+    private bool canDash = true;
+    [SerializeField] private float dashCooldown = 1f;
     [SerializeField] private TrailRenderer trail;
 
     [SerializeField] private Vector2 input;
@@ -79,7 +82,7 @@ public class MainCharacterScript : Entity
 
             }
         }
-        if (Mathf.Abs(input.x) > 0.03f && Mathf.Abs(input.y) > 0.03f )
+        if (Mathf.Abs(input.x) > 0.009f || Mathf.Abs(input.y) > 0.009f)
             playerAttackScript.LastInput = lastInput;
         if(input.x > 0.01f && isFlipped)
         {
@@ -100,6 +103,8 @@ public class MainCharacterScript : Entity
 
     private void UpdateMovement()
     {
+        if (isDashing)
+            return;
         var targetSpeed = movementSpeed * input;
         var speedDiff = targetSpeed - rb2D.velocity;
         var accelRate = new Vector2(Mathf.Abs(targetSpeed.x) > 0.01f ? acceleration.x : decceleration.x, Mathf.Abs(targetSpeed.y) > 0.01f ? acceleration.y : decceleration.y);
@@ -110,22 +115,39 @@ public class MainCharacterScript : Entity
 
     private void Dash(InputAction.CallbackContext context)
     {
-        if (!canMove)
+        if (!canMove || !canDash)
             return;
 
+        StartCoroutine(DashCoroutine());
+        
+    }
 
-        //Invincible
+    IEnumerator DashCoroutine()
+    {
         if (invincibleCoroutine != null)
             StopCoroutine(invincibleCoroutine);
         invincibleCoroutine = StartCoroutine(DashInvincibilityHandle(dashInvincibleTime));
+        //un delay de 6frames (je devrai peut-être adapter en seconde)
+        yield return new WaitForSeconds(0.15f);
 
+
+        isDashing = true;
         //Va rapidement dans une direction
-        this.rb2D.AddForce(lastInput.normalized * dashForce,ForceMode2D.Impulse);
+        this.rb2D.velocity = Vector2.zero;
+        this.rb2D.AddForce(lastInput.normalized * dashForce, ForceMode2D.Impulse);
         trail.emitting = true;
 
 
         //Ne peut pas input de direction pendant un certains temps
-        StartCoroutine(CantMoveTimer(0.3f));
+        StartCoroutine(CantMoveTimer(0.4f));
+    }
+
+    IEnumerator DashCooldownTimer(float timer)
+    {
+        canDash = false;
+        yield return new WaitForSeconds(timer);
+        canDash = true;
+        yield break;
     }
 
     public void Flip()
@@ -214,7 +236,6 @@ public class MainCharacterScript : Entity
         Physics2D.IgnoreLayerCollision(6, 8, false);
         Physics2D.IgnoreLayerCollision(6, 9, false);
         sprite.color = new Color(1f, 1f, 1f, 1f);
-        isInvincible = false;
         yield break;
     }
     
@@ -232,6 +253,7 @@ public class MainCharacterScript : Entity
         Physics2D.IgnoreLayerCollision(6, 9, false);
         sprite.color = new Color(1f, 1f, 1f, 1f);
         isInvincible = false;
+        isDashing = false;
 
         yield break;
     }
@@ -242,6 +264,9 @@ public class MainCharacterScript : Entity
         yield return new WaitForSeconds(timer);
         canMove = true;
         trail.emitting = false;
+        isDashing = false;
+        StartCoroutine(DashCooldownTimer(dashCooldown));
+
 
 
     }

@@ -68,12 +68,12 @@ public class Entity : MonoBehaviour, IHittable
     IEnumerator DeathCoroutine()
     {
         this.animator.enabled = false;
-        Quaternion targetRotation = new Quaternion(0, 0, -90, 0);
+        Quaternion targetRotation = Quaternion.Euler(0, 0, -90);
         float t = 0f;
         while (t <= 1.5f)
         {
             t += Time.deltaTime;
-            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation,  Time.deltaTime * 0.2f);
+            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation,  Time.deltaTime * 2f );
 
             yield return null;
         }
