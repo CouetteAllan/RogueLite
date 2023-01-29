@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef985af0436e31b45b749b55606cd049, type: 3}
   m_Name: LittleEnemy
   m_EditorClassIdentifier: 
-  health: 25
+  health: 126.18
   animator: {fileID: 9100000, guid: 6b08f41d27c64b14cacf1259544fd824, type: 2}
   speed: 6
   name: Oui
   damage: 5
-  rangeRadius: 2
+  rangeRadius: 1.5
   attackSpeed: 1
   enemySprite: {fileID: 580100881, guid: d9c99eb1291dcfc488e4c5a67732cbeb, type: 3}
   radiusHitBox: 0.5

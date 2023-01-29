@@ -41,6 +41,8 @@ public class Entity : MonoBehaviour, IHittable
 
     public virtual void ChangeHealth(float _value, IHitSource source = null)
     {
+        if (isDead)
+            return;
         if(_value < 0)
         {
             animator.SetTrigger("Hurt");    
@@ -70,7 +72,7 @@ public class Entity : MonoBehaviour, IHittable
         this.animator.enabled = false;
         Quaternion targetRotation = Quaternion.Euler(0, 0, -90);
         float t = 0f;
-        while (t <= 1.5f)
+        while (t <= 1f)
         {
             t += Time.deltaTime;
             this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation,  Time.deltaTime * 2f );
@@ -84,7 +86,7 @@ public class Entity : MonoBehaviour, IHittable
 
     public virtual void OnHit(float _value, IHitSource source)
     {
-        if (isInvincible)
+        if (isInvincible || isDead)
             return;
         ChangeHealth(_value,source);
         EventOnHit?.Invoke();

@@ -61,6 +61,7 @@ public class MainCharacterScript : Entity
         if (startWithWeapon)
         {
             PickUpWeapon(weapon);
+            playerAttackScript.SetAttackSpeed(weaponPickedUpData.attackRate);
         }
         trail.emitting = false;
         health = maxHealth;
@@ -185,12 +186,6 @@ public class MainCharacterScript : Entity
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        IHitSource hitSourceObject = collision.GetComponent<IHitSource>();
-        if(hitSourceObject != null)
-        {
-            if(!hitSourceObject.IsDead)
-                this.OnHit(-hitSourceObject.Damage, hitSourceObject);
-        }
 
         IPickable pickable = collision.GetComponent<IPickable>();
         if(pickable != null)
@@ -236,6 +231,7 @@ public class MainCharacterScript : Entity
         Physics2D.IgnoreLayerCollision(6, 8, false);
         Physics2D.IgnoreLayerCollision(6, 9, false);
         sprite.color = new Color(1f, 1f, 1f, 1f);
+        isInvincible = false;
         yield break;
     }
     

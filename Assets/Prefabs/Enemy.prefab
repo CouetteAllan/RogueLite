@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7145204090126240303}
   - component: {fileID: 346770818590834797}
   - component: {fileID: 5798246620315374759}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: ParticleEffects
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4927,7 +4927,7 @@ MonoBehaviour:
   maxHealth: 0
   damage: 0
   movementSpeed: 0
-  pushForce: 5
+  pushForce: 10
   graphObject: {fileID: 3947535519687656688}
   animator: {fileID: 3947535519687656691}
   enemyData: {fileID: 11400000, guid: 692ff1e48a200ca46b0900a84eeede81, type: 2}

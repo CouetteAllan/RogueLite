@@ -316,10 +316,11 @@ public class EnemyEntity : Entity, IHitSource
     IEnumerator WaitForAttack()
     {
 
-        while (!endAttack && !gotCanceled)
+        while (!endAttack || !gotCanceled)
         {
             yield return null;
         }
+        endAttack = true;
         yield break;
     }
     public void EndAttack()

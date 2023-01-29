@@ -23,6 +23,7 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     public bool isAttacking = false;
     public Vector2 MouseAimDir { get; set; }
+    private Vector2 lastInput;
     public Vector2 LastInput { get; set; }
 
     [SerializeField] private float pushForceForward = 6f;
@@ -56,7 +57,6 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
         playerInput.onControlsChanged += PlayerInput_onControlsChanged;
 
-        attackSpeed = actualWeapon.attackRate;
         player.GetAnimator().SetFloat("AttackSpeedModifier", attackSpeed);
     }
 
@@ -76,6 +76,10 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     }
 
+    public void SetAttackSpeed(float _attackspeed)
+    {
+        attackSpeed = _attackspeed;
+    }
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (isAttacking)
@@ -146,20 +150,21 @@ public class PlayerAttack : MonoBehaviour, IHitSource
             }
 
         }
-        LastInput = nearestDir.normalized;
+        lastInput = nearestDir.normalized;
     }
 
     private void GamePadAttackHandle()
     {
-        rb2D.AddForce(LastInput.normalized * pushForceForward, ForceMode2D.Impulse);
+        rb2D.AddForce(lastInput.normalized * pushForceForward, ForceMode2D.Impulse);
         hitbox.SetActive(true);
 
-        offset = rb2D.position + LastInput.normalized * 1.5f;
+        offset = rb2D.position + lastInput.normalized ;
 
         if (attackCoroutine != null)
             StopCoroutine(attackCoroutine);
         attackCoroutine = StartCoroutine(ActiveFrameAttack());
         hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
+        hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.2f , (actualWeapon.range / 20) * 1.2f, 0);
     }
 
     IEnumerator ActiveFrameAttack()
@@ -167,6 +172,8 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         Collider2D[] enemiesHit = null;
         while (isAttacking)
         {
+            offset = rb2D.position + lastInput.normalized ;
+            hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
             enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
             foreach (var enemy in enemiesHit)
             {
@@ -174,7 +181,7 @@ public class PlayerAttack : MonoBehaviour, IHitSource
                 hitObject.OnHit(-actualWeapon.damage, this);
                 hitObject.IsInvincible = true;
             }
-            yield return new WaitForSeconds(0.05f);
+            yield return new WaitForSeconds(0.02f);
         }
         if (enemiesHit != null)
         {
@@ -197,12 +204,13 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     public void SetActualWeapon(Weapons weapon)
     {
         this.actualWeapon = weapon;
+        this.attackSpeed = weapon.attackRate;
         hand.GetComponent<SpriteRenderer>().sprite = actualWeapon.sprite;
     }
 
 
-    /*private void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(this.rb2D.position + LastInput.normalized * 1.7f, 1.5f);
-    }*/
+        Gizmos.DrawWireSphere(offset, actualWeapon.range / 20);
+    }
 }
