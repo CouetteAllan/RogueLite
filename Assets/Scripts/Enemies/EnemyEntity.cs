@@ -36,7 +36,7 @@ public class EnemyEntity : Entity, IHitSource
     [SerializeField] private GameObject particle;
     private void InitEnemyData()
     {
-        animator = graphObject.GetComponent<Animator>();
+        animator = GetComponent<Animator>();
         this.animator.runtimeAnimatorController = enemyData.animator;
         graphObject.GetComponent<SpriteRenderer>().sprite = enemyData.enemySprite;
 
@@ -77,20 +77,31 @@ public class EnemyEntity : Entity, IHitSource
 
     private void UpdateMovementTowardPlayer()
     {
+        if (!canMove)
+        {
+            rb2D.velocity = Vector2.zero;
+            return;
+        }
         //Un vecteur direction
         Vector2 direction = playerRB.position - this.rb2D.position;
         //Une velocité
         Vector2 movement = direction.normalized * movementSpeed / 2;
 
+
         this.rb2D.velocity = movement;
 
         if(isFlipped && rb2D.velocity.x > 0.01f)
+        {
             Flip();
+        }
 
         if(!isFlipped && rb2D.velocity.x < -0.01f)
+        {
             Flip();
 
-        
+        }
+
+
     }
 
     private void UpdateMovementRunAwayFromPlayer()
@@ -112,10 +123,8 @@ public class EnemyEntity : Entity, IHitSource
     public override void OnHit(float _value, IHitSource source)
     {
 
-        StartCoroutine(WaitForMoving(0.2f));
-        Debug.Log("Actual Health" + health + "dégâts du coup: " + _value);
+        StartCoroutine(WaitForMoving(0.3f));
         base.OnHit(_value, source);
-        Debug.Log("Health après coup: " + health);
 
 
     }
@@ -137,7 +146,9 @@ public class EnemyEntity : Entity, IHitSource
     public void Flip()
     {
         isFlipped = !isFlipped;
-        this.transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        Vector3 currentScale = this.gameObject.transform.localScale;
+        currentScale.x *= -1;
+        this.gameObject.transform.localScale = currentScale;
 
     }
 
@@ -207,11 +218,12 @@ public class EnemyEntity : Entity, IHitSource
         while (!inAttackRange)
         {
             updateMovement();
-            Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position , enemyData.rangeRadius, playerLayer);
+            Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius, playerLayer);
             if (playerInRange != null)
             {
                 inAttackRange = true;
             }
+
 
             yield return new WaitForFixedUpdate();
         }
@@ -269,14 +281,15 @@ public class EnemyEntity : Entity, IHitSource
         yield return null;
         yield return StartCoroutine(WaitForAttack());
         gotCanceled = false;
-        yield return new WaitForSeconds(1f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
+        yield return new WaitForSeconds(2f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
         StartCoroutine(AIFindTarget());
         yield break;
     }
     #endregion
     public void StartMeleeAttack()
     {
-        this.rb2D.AddForce((lastPlayerPos - this.rb2D.position).normalized * 2,ForceMode2D.Impulse);
+        this.rb2D.AddForce((lastPlayerPos - this.rb2D.position).normalized * 3,ForceMode2D.Impulse);
+        Debug.Log("oui oui");
         StartCoroutine(ActiveFrameAttack());
         particle.transform.position = (lastPlayerPos - this.rb2D.position ) + this.rb2D.position;
         particle.GetComponent<ParticleSystem>().Play();
@@ -284,8 +297,10 @@ public class EnemyEntity : Entity, IHitSource
     IEnumerator ActiveFrameAttack()
     {
         bool playerHitOnce = false;
+        endAttack = false;
         while (!endAttack)
         {
+            Debug.Log("j'ai tapé");
             if (!playerHitOnce)
             {
                 Collider2D playerInRange = Physics2D.OverlapCircle((lastPlayerPos - this.rb2D.position) + this.rb2D.position, enemyData.rangeRadius / 2, playerLayer);
@@ -316,7 +331,7 @@ public class EnemyEntity : Entity, IHitSource
     IEnumerator WaitForAttack()
     {
 
-        while (!endAttack || !gotCanceled)
+        while (!endAttack && !gotCanceled)
         {
             yield return null;
         }

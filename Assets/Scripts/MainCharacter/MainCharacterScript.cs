@@ -5,6 +5,10 @@ using UnityEngine.InputSystem;
 
 public class MainCharacterScript : Entity
 {
+    [SerializeField] private Vector2 acceleration;
+    [SerializeField] private Vector2 decceleration;
+    [SerializeField] private Vector2 velocityPower;
+
     [SerializeField] private float invincibleTime = 2f;
     [SerializeField] private float dashInvincibleTime = 1f;
     [SerializeField] private float dashForce = 1f;
@@ -41,6 +45,9 @@ public class MainCharacterScript : Entity
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
+        playerInput = GetComponent<PlayerInput>();
+
         playerInputAction = new PlayerInputAction();
         playerAttackScript = GetComponent<PlayerAttack>();
 
@@ -56,7 +63,6 @@ public class MainCharacterScript : Entity
     protected override void Start()
     {
         base.Start();
-        playerInput = GetComponent<PlayerInput>();
         GameManager.Instance.InitPlayer(this);
         if (startWithWeapon)
         {
@@ -129,7 +135,7 @@ public class MainCharacterScript : Entity
             StopCoroutine(invincibleCoroutine);
         invincibleCoroutine = StartCoroutine(DashInvincibilityHandle(dashInvincibleTime));
         //un delay de 6frames (je devrai peut-être adapter en seconde)
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.07f);
 
 
         isDashing = true;
@@ -154,7 +160,10 @@ public class MainCharacterScript : Entity
     public void Flip()
     {
         isFlipped = !isFlipped;
-        this.transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
+        Vector3 currentScale = animator.gameObject.transform.localScale;
+        currentScale.x *= -1;
+        animator.gameObject.transform.localScale = currentScale;
+        
 
     }
 
@@ -225,7 +234,7 @@ public class MainCharacterScript : Entity
         Physics2D.IgnoreLayerCollision(6, 8, true);
         Physics2D.IgnoreLayerCollision(6, 9, true);
         SpriteRenderer sprite = graphObject.GetComponent<SpriteRenderer>();
-        sprite.color = new Color(1f, 1f, 1f, 0f);
+        sprite.color = new Color(1f, 1f, 1f, 0.4f);
 
         yield return new WaitForSeconds(time);
         Physics2D.IgnoreLayerCollision(6, 8, false);

@@ -11,8 +11,8 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
     public Rigidbody2D SourceRigidbody2D => rb2D;
 
     public float Damage => projectileDamage;
-
-    public bool IsInvincible { get => false; set => throw null; }
+    private bool gotHit;
+    public bool GotHit { get => false; set => gotHit = value; }
 
     public bool IsDead => false;
 

@@ -10,8 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3752699502146245624}
   - component: {fileID: 3752699502146245625}
-  - component: {fileID: 3752699502146245626}
-  - component: {fileID: 3752699502146245627}
   - component: {fileID: 3752699502146245604}
   m_Layer: 6
   m_Name: Graph
@@ -28,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3752699502146245631}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.42, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -90,39 +88,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
---- !u!95 &3752699502146245626
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3752699502146245631}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 32b259118a92477448965e0fb5aa3c55, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &3752699502146245627
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3752699502146245631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb01f4de5b947e940a5fa8637cc1c9ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerAttackScript: {fileID: 3752699502455542845}
 --- !u!114 &3752699502146245604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +118,8 @@ GameObject:
   - component: {fileID: 3752699502455542845}
   - component: {fileID: 3752699502455542846}
   - component: {fileID: 3752699502455542847}
+  - component: {fileID: 1835471835}
+  - component: {fileID: 2261038686636224318}
   m_Layer: 6
   m_Name: MainCharacter
   m_TagString: Player
@@ -188,16 +155,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4b3cad8ee9f2e743b52a93bffe9a7e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  acceleration: {x: 3, y: 3}
-  decceleration: {x: 0.18, y: 0.18}
-  velocityPower: {x: 0.6, y: 0.6}
   health: 100
   maxHealth: 100
   damage: 0
   movementSpeed: 7
   pushForce: 30
   graphObject: {fileID: 3752699502146245631}
-  animator: {fileID: 3752699502146245626}
+  acceleration: {x: 3, y: 3}
+  decceleration: {x: 0.18, y: 0.18}
+  velocityPower: {x: 0.5, y: 0.5}
   invincibleTime: 2.5
   dashInvincibleTime: 1
   dashForce: 20
@@ -221,7 +187,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 7
+  m_LinearDrag: 5.5
   m_AngularDrag: 0.05
   m_GravityScale: 0
   m_Material: {fileID: 0}
@@ -382,6 +348,39 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.38138038, y: 0.16142684}
   m_EdgeRadius: 0
+--- !u!95 &1835471835
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3752699502455542839}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 32b259118a92477448965e0fb5aa3c55, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2261038686636224318
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3752699502455542839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb01f4de5b947e940a5fa8637cc1c9ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerAttackScript: {fileID: 0}
 --- !u!1 &3752699502704651480
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ public class SpawnManager : Singleton<SpawnManager>
     {
         foreach (var enemy in enemiesPrefab)
         {
-            enemy.enemyData = enemySOs[Random.Range(0, 2)];
+           // enemy.enemyData = enemySOs[Random.Range(0, 2)];
         }
     }
 

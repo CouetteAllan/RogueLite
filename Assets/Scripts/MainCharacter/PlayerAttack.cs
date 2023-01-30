@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerAttack : MonoBehaviour, IHitSource
 {
-    [HideInInspector] private bool isUsingGamePad;
+    private bool isUsingGamePad;
 
     private Weapons actualWeapon;
     private float attackSpeed = 1f;
@@ -40,6 +40,9 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     public bool IsDead => false;
 
     private Coroutine attackCoroutine;
+
+    private List<IHittable> enemiesThatBeenHit = new List<IHittable>();
+    
     void Awake()
     {
         rb2D = GetComponent<Rigidbody2D>();
@@ -50,9 +53,17 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     private void Start()
     {
         if (isUsingGamePad)
+        {
             attackHandle = GamePadAttackHandle;
+            aimingHandle = GamePadAimingHandle;
+
+        }
         else
+        {
             attackHandle = MouseAttackHandle;
+            aimingHandle = MouseAimingHandle;
+
+        }
         playerInput = GetComponent<PlayerInput>();
 
         playerInput.onControlsChanged += PlayerInput_onControlsChanged;
@@ -88,6 +99,7 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         player.GetAnimator().SetTrigger("Attack");
         rb2D.velocity = Vector2.zero;
         isAttacking = true;
+
         //la visée est choisit en fonction de la manette ou bien de la souris
         aimingHandle();
     }
@@ -116,16 +128,23 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     {
         rb2D.AddForce(MouseAimDir.normalized * pushForceForward, ForceMode2D.Impulse);
         hitbox.SetActive(true);
+        offset = rb2D.position + MouseAimDir.normalized;
 
-        offset = rb2D.position + MouseAimDir.normalized * 1.5f;
-        Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
-        foreach (var enemy in enemiesHit)
+        if (enemiesThatBeenHit != null)
         {
-            IHittable hitObject = enemy.GetComponent<EnemyEntity>();
-            hitObject.OnHit(-actualWeapon.damage, this);
+            foreach (IHittable enemy in enemiesThatBeenHit)
+            {
+                enemy.GotHit = false;
+            }
         }
+        enemiesThatBeenHit.Clear();
+
+        if (attackCoroutine != null)
+            StopCoroutine(attackCoroutine);
+        attackCoroutine = StartCoroutine(ActiveFrameAttack(false));
 
         hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
+        hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.2f, (actualWeapon.range / 20) * 1.2f, 0);
     }
 
     private void GamePadAimingHandle()
@@ -159,41 +178,56 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         hitbox.SetActive(true);
 
         offset = rb2D.position + lastInput.normalized ;
-
+        if (enemiesThatBeenHit != null)
+        {
+            foreach (IHittable enemy in enemiesThatBeenHit)
+            {
+                enemy.GotHit = false;
+            }
+        }
+        enemiesThatBeenHit.Clear();
         if (attackCoroutine != null)
             StopCoroutine(attackCoroutine);
-        attackCoroutine = StartCoroutine(ActiveFrameAttack());
+        attackCoroutine = StartCoroutine(ActiveFrameAttack(true));
         hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
         hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.2f , (actualWeapon.range / 20) * 1.2f, 0);
     }
 
-    IEnumerator ActiveFrameAttack()
+    IEnumerator ActiveFrameAttack(bool usingGamePad)
     {
-        Collider2D[] enemiesHit = null;
+        Vector2 mouseAim = MouseAimDir;
+        
         while (isAttacking)
         {
-            offset = rb2D.position + lastInput.normalized ;
+            if(usingGamePad)
+                offset = rb2D.position + lastInput.normalized ;
+            else
+                offset = rb2D.position + mouseAim.normalized;
+
             hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
-            enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
-            foreach (var enemy in enemiesHit)
+            Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
+            if(enemiesHit != null)
             {
-                IHittable hitObject = enemy.GetComponent<EnemyEntity>();
-                hitObject.OnHit(-actualWeapon.damage, this);
-                hitObject.IsInvincible = true;
+                foreach (var enemy in enemiesHit)
+                {
+                    IHittable hitObject = enemy.GetComponent<IHittable>();
+                    hitObject.OnHit(-actualWeapon.damage, this);
+                    if (!hitObject.GotHit)
+                    {
+                        enemiesThatBeenHit.Add(hitObject);
+                        hitObject.GotHit = true;
+                    }
+
+                }
             }
-            yield return new WaitForSeconds(0.02f);
+            
+            yield return new WaitForSeconds(0.015f);
         }
-        if (enemiesHit != null)
-        {
-            foreach (var enemy in enemiesHit)
-            {
-                IHittable hitObject = enemy.GetComponent<EnemyEntity>();
-                hitObject.IsInvincible = false;
-            }
-        }
+
         yield break;
 
     }
+
     public void DeActivateHitBox()
     {
         //desactive la hitbox en fin d'animation
@@ -209,8 +243,8 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     }
 
 
-    private void OnDrawGizmosSelected()
+    /*private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(offset, actualWeapon.range / 20);
-    }
+    }*/
 }

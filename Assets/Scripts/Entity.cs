@@ -5,15 +5,13 @@ using System;
 
 public class Entity : MonoBehaviour, IHittable
 {
-    [SerializeField] protected Vector2 acceleration;
-    [SerializeField] protected Vector2 decceleration;
-    [SerializeField] protected Vector2 velocityPower;
-
     [SerializeField] protected float health;
     [SerializeField] protected float maxHealth;
     [SerializeField] protected float damage;
     [SerializeField] protected float movementSpeed;
 
+    [Space]
+    [Tooltip("Force appliquée lorsque l'entitée est frappée")]
     [SerializeField] protected float pushForce = 10f;
     [SerializeField] protected GameObject graphObject;
 
@@ -21,7 +19,7 @@ public class Entity : MonoBehaviour, IHittable
 
 
     protected Rigidbody2D rb2D;
-    [SerializeField] protected Animator animator;
+    protected Animator animator;
 
     public delegate void DeathEvent();
     public DeathEvent OnDeath;
@@ -29,7 +27,7 @@ public class Entity : MonoBehaviour, IHittable
     public delegate void OnHitEvent();
     public OnHitEvent EventOnHit;
     protected bool isInvincible = false;
-    public bool IsInvincible { get => isInvincible; set => isInvincible = value; }
+    public bool GotHit { get => isInvincible; set => isInvincible = value; }
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -86,7 +84,7 @@ public class Entity : MonoBehaviour, IHittable
 
     public virtual void OnHit(float _value, IHitSource source)
     {
-        if (isInvincible || isDead)
+        if (isDead || isInvincible)
             return;
         ChangeHealth(_value,source);
         EventOnHit?.Invoke();

@@ -6,6 +6,8 @@ public class EnemyDrop : MonoBehaviour
 {
     [SerializeField] ItemsSO[] itemToDrop;
     [SerializeField] GameObject itemPrefab;
+
+    [Range(0,100)] [SerializeField] float dropChance = 40;
     private ItemsSO itemPicked = null;
     private EnemyEntity enemy;
     private void Awake()
@@ -22,7 +24,9 @@ public class EnemyDrop : MonoBehaviour
 
     public void PickItem()
     {
-        if (Random.Range(0f, 1f) < 0.5f)
+        float percentDropChance = dropChance / 100;
+
+        if (Random.Range(0f, 1f) < percentDropChance)
         {
             itemPicked = itemToDrop[Random.Range(0, itemToDrop.Length)];
             DropItem();

@@ -7,7 +7,7 @@ public interface IHittable
 {
     void OnHit(float _value, IHitSource source);
 
-    bool IsInvincible { get; set; }
+    bool GotHit { get; set; }
 }
 
 public interface IPickable
