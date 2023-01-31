@@ -73,11 +73,11 @@ public class Entity : MonoBehaviour, IHittable
         while (t <= 1f)
         {
             t += Time.deltaTime;
-            this.transform.rotation = Quaternion.Lerp(this.transform.rotation, targetRotation,  Time.deltaTime * 2f );
+            graphObject.transform.rotation = Quaternion.Lerp(graphObject.transform.rotation, targetRotation,  Time.deltaTime * 2f );
 
             yield return null;
         }
-        this.transform.rotation = targetRotation;
+        graphObject.transform.rotation = targetRotation;
         yield return new WaitForSeconds(0.2f);
         Destroy(this.gameObject);
     }

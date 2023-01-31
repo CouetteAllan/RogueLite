@@ -4,21 +4,23 @@ using UnityEngine;
 
 public class SpawnManager : Singleton<SpawnManager>
 {
-    public EnemySO[] enemySOs;
-    public EnemyEntity[] enemiesPrefab;
+    [SerializeField] GameObject[] spawnerPoints;
+
+    public delegate void EnemySpawnerEvent();
+    public EnemySpawnerEvent OnEnemySpawn;
+    public EnemySpawnerEvent OnEnemySetSpawn;
 
 
     public void SetAllSpawners()
     {
-        foreach (var enemy in enemiesPrefab)
+
+        foreach (var spawner in spawnerPoints)
         {
-           // enemy.enemyData = enemySOs[Random.Range(0, 2)];
+            spawner.GetComponent<SpawnPointScript>().SpawnRandomObject();
         }
+
     }
 
 
-    void Start()
-    {
-        SetAllSpawners();
-    }
+
 }

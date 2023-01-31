@@ -11,22 +11,28 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
     public Rigidbody2D SourceRigidbody2D => rb2D;
 
     public float Damage => projectileDamage;
-    private bool gotHit;
+    private bool gotHit = false;
     public bool GotHit { get => false; set => gotHit = value; }
 
     public bool IsDead => false;
+    Coroutine coroutine;
 
     private void Start()
     {
         rb2D = GetComponent<Rigidbody2D>();
 
         rb2D.velocity = direction * speed;
-        StartCoroutine(Lifespan(3f));
+        coroutine = StartCoroutine(Lifespan(3f));
+        
     }
 
     void IHittable.OnHit(float _value, IHitSource source)
     {
-            Destroy(this.gameObject);   
+        Vector2 newDir = -direction;
+        rb2D.velocity = newDir * speed * 1.2f;
+        StopCoroutine(coroutine);
+        StartCoroutine(Lifespan(3f));
+        gotHit = true;
     }
 
     public void SetProjectile(Vector2 direction, float speed, float damage)
@@ -38,10 +44,18 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.TryGetComponent<IHittable>(out IHittable hitObject))
+        if(collision.TryGetComponent<MainCharacterScript>(out MainCharacterScript hitObject))
         {
             hitObject.OnHit(-Damage, this);
             Destroy(this.gameObject);
+        }
+        if (gotHit)
+        {
+            if (collision.TryGetComponent<EnemyEntity>(out EnemyEntity enemy))
+            {
+                enemy.OnHit(-Damage, this);
+                Destroy(this.gameObject);
+            }
         }
     }
 
@@ -55,4 +69,5 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
     {
         StopAllCoroutines();
     }
+
 }

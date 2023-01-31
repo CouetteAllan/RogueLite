@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RangeEnemy
   m_EditorClassIdentifier: 
   health: 20
-  animator: {fileID: 9100000, guid: 09f9a8f2364a7bf418bb227c79e6f4a6, type: 2}
+  animator: {fileID: 9100000, guid: 723a51d1b9d5c29468b43fd3b9eb0f48, type: 2}
   speed: 10
   name: Ranged
   damage: 6

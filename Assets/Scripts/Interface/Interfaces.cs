@@ -22,3 +22,8 @@ public interface IHitSource
 
     bool IsDead { get; }
 }
+
+public interface IExit
+{
+    void OnExit(MainCharacterScript player);
+}

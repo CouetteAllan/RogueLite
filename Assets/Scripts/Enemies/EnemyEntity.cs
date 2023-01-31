@@ -38,7 +38,6 @@ public class EnemyEntity : Entity, IHitSource
     {
         animator = GetComponent<Animator>();
         this.animator.runtimeAnimatorController = enemyData.animator;
-        graphObject.GetComponent<SpriteRenderer>().sprite = enemyData.enemySprite;
 
         this.maxHealth = enemyData.health;
         this.health = maxHealth;
@@ -58,6 +57,26 @@ public class EnemyEntity : Entity, IHitSource
     protected override void Start()
     {
         base.Start();
+        /*switch (behaviour)
+        {
+            case EnemySO.Behaviour.Melee:
+                updateMovement = UpdateMovementTowardPlayer;
+                startAttack = StartMeleeAttack;
+                break;
+            case EnemySO.Behaviour.Ranged:
+                updateMovement = UpdateMovementRunAwayFromPlayer;
+                startAttack = StartRangedAttack;
+                break;
+        }
+
+        StartCoroutine(AIFindTarget());
+        GetComponent<CircleCollider2D>().radius = this.radiusHitbox;*/
+       
+    }
+
+    public void StartEnemy()
+    {
+        base.Start();
         InitEnemyData();
         switch (behaviour)
         {
@@ -72,7 +91,8 @@ public class EnemyEntity : Entity, IHitSource
         }
         StartCoroutine(AIFindTarget());
         GetComponent<CircleCollider2D>().radius = this.radiusHitbox;
-       
+        this.EventOnHit += GotCanceled;
+        this.OnDeath += StopAllCoroutines;
     }
 
     private void UpdateMovementTowardPlayer()
@@ -289,7 +309,6 @@ public class EnemyEntity : Entity, IHitSource
     public void StartMeleeAttack()
     {
         this.rb2D.AddForce((lastPlayerPos - this.rb2D.position).normalized * 3,ForceMode2D.Impulse);
-        Debug.Log("oui oui");
         StartCoroutine(ActiveFrameAttack());
         particle.transform.position = (lastPlayerPos - this.rb2D.position ) + this.rb2D.position;
         particle.GetComponent<ParticleSystem>().Play();
@@ -300,7 +319,6 @@ public class EnemyEntity : Entity, IHitSource
         endAttack = false;
         while (!endAttack)
         {
-            Debug.Log("j'ai tapé");
             if (!playerHitOnce)
             {
                 Collider2D playerInRange = Physics2D.OverlapCircle((lastPlayerPos - this.rb2D.position) + this.rb2D.position, enemyData.rangeRadius / 2, playerLayer);
@@ -322,7 +340,7 @@ public class EnemyEntity : Entity, IHitSource
     {
         //instancier un projectile dans la direction du player.
         GameObject projectile = Instantiate(enemyData.projectile, this.rb2D.position, Quaternion.identity);
-        projectile.GetComponent<ProjectileScript>().SetProjectile((playerRB.position - this.rb2D.position).normalized, 8f,damage);
+        projectile.GetComponent<ProjectileScript>().SetProjectile((playerRB.position - this.rb2D.position).normalized, 10f,damage);
     }
 
 

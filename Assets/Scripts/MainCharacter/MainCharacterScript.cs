@@ -40,7 +40,7 @@ public class MainCharacterScript : Entity
     private Coroutine invincibleCoroutine;
     public delegate void PlayerChangeHealth(float value);
     public PlayerChangeHealth OnPlayerChangeHealth;
-
+    private bool doOnce = false;
 
 
     private void Awake()
@@ -101,6 +101,12 @@ public class MainCharacterScript : Entity
         }
 
         animator.SetBool("IsMoving", isMoving);
+
+
+        if (Keyboard.current.bKey.wasPressedThisFrame)
+        {
+            SpawnManager.Instance.SetAllSpawners();
+        }
     }
 
     private void FixedUpdate()

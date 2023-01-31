@@ -165,9 +165,9 @@ MonoBehaviour:
   decceleration: {x: 0.18, y: 0.18}
   velocityPower: {x: 0.5, y: 0.5}
   invincibleTime: 2.5
-  dashInvincibleTime: 1
+  dashInvincibleTime: 0.7
   dashForce: 20
-  dashCooldown: 0.1
+  dashCooldown: 0.2
   trail: {fileID: 3752699502704651482}
   input: {x: 0, y: 0}
   mouseAim: {x: 0, y: 0}
