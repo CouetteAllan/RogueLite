@@ -8,35 +8,51 @@ public class SpawnPointScript : MonoBehaviour
     [Range(0, 100)] [SerializeField] float chanceToSpawn;
     [SerializeField] private EnemySO[] enemy_SOs;
     private RoomSpawnHandle actualRoom;
-    private int nbOfWaves = 2;
+    private int nbOfWaves = 3;
 
     public void SpawnRandomObject()
     {
         float chance = chanceToSpawn / 100;
         if(Random.Range(0f,1f) < chance)
         {
-            GameObject instantiateGO = Instantiate(objectsThatCanSpawn[/*Random.Range(0, objectsThatCanSpawn.Length)*/0],this.transform.position,Quaternion.identity);
-            if (instantiateGO.TryGetComponent<EnemyEntity>(out EnemyEntity enemyEntity))
-            {
-                actualRoom.AddEnemy();
-                enemyEntity.enemyData = enemy_SOs[Random.Range(0, 2)];
-                enemyEntity.StartEnemy(actualRoom);
-            }
-            
+            StartCoroutine(DelaySpawn(2f));
         }
-        Destroy(this.gameObject);
+        if(nbOfWaves <= 0)
+            Destroy(this.gameObject);
+        nbOfWaves--;
+    }
+
+    private void Spawn()
+    {
+        GameObject instantiateGO = Instantiate(objectsThatCanSpawn[/*Random.Range(0, objectsThatCanSpawn.Length)*/0], this.transform.position, Quaternion.identity);
+        if (instantiateGO.TryGetComponent<EnemyEntity>(out EnemyEntity enemyEntity))
+        {
+            enemyEntity.enemyData = enemy_SOs[Random.Range(0, 2)];
+            enemyEntity.StartEnemy(actualRoom);
+        }
     }
 
     private void OnDestroy()
     {
         actualRoom.SpawnEnemy -= SpawnRandomObject;
-
+        actualRoom.NoMoreEnemies -= SpawnRandomObject;
+        actualRoom.NoMoreWavesLeft();
     }
 
     public void SetActualRoom(RoomSpawnHandle room)
     {
         actualRoom = room;
         actualRoom.SpawnEnemy += SpawnRandomObject;
+        if(nbOfWaves > 1)
+            actualRoom.NoMoreEnemies += SpawnRandomObject;
+    }
+
+    IEnumerator DelaySpawn(float delay)
+    {
+        actualRoom.AddEnemy();
+        yield return new WaitForSeconds(delay);
+        Spawn();
+        yield break;
     }
 
 }

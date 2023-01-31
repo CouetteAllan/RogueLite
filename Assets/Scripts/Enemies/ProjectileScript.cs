@@ -62,10 +62,9 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
                 if (isFromPlayer)
                 {
                     Collider2D[] hitObjects = Physics2D.OverlapCircleAll(rb2D.position, 2f, layer);
-                    Debug.Log(hitObjects.Length);
                     foreach (var hit in hitObjects)
                     {
-                        hit.GetComponent<IHittable>().OnHit(-Damage, this);
+                        hit.GetComponent<IHittable>().OnHit(-Damage / 2, this);
                     }
                 }
                 else

@@ -7,8 +7,12 @@ public class RoomSpawnHandle : MonoBehaviour
     public delegate void RoomSpawnEvent();
     public RoomSpawnEvent SpawnEnemy;
     public RoomSpawnEvent NoMoreEnemies;
+    public RoomSpawnEvent NoMoreWaves;
+    [SerializeField] private GameObject blockingPaths;
 
     private int enemyNbInRoom = 0;
+    private int nbWaves = 0;
+    bool noWave = false;
 
     private SpawnPointScript[] spawns;
 
@@ -20,6 +24,8 @@ public class RoomSpawnHandle : MonoBehaviour
     public void AddEnemy()
     {
         enemyNbInRoom++;
+        if (!blockingPaths.activeInHierarchy)
+            blockingPaths.SetActive(true);
     }
 
     public void SubstractEnemy()
@@ -28,7 +34,19 @@ public class RoomSpawnHandle : MonoBehaviour
         if (enemyNbInRoom <= 0)
         {
             NoMoreEnemies?.Invoke();
+            Debug.Log("Je sui sappelé");
+            if (noWave)
+            {
+                NoMoreWaves?.Invoke();
+                blockingPaths.SetActive(false);
+
+            }
         }
+    }
+
+    public void NoMoreWavesLeft()
+    {
+        noWave = true;
     }
 
     public void SetUpSpawners()
