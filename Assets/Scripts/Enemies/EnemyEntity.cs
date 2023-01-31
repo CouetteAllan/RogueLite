@@ -146,7 +146,12 @@ public class EnemyEntity : Entity, IHitSource
         StartCoroutine(WaitForMoving(0.3f));
         base.OnHit(_value, source);
 
+    }
 
+    public override void Die()
+    {
+        SpawnManager.Instance.SubstractEnemy();
+        base.Die();
     }
 
     public IEnumerator WaitForMoving(float seconds)

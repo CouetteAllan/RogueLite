@@ -14,4 +14,13 @@ public class Weapons : ScriptableObject
     public string weaponName;
     public string description;
 
+    public enum WeaponType
+    {
+        Melee,
+        Ranged
+    }
+
+    public WeaponType weaponType;
+    public GameObject projectile;
+
 }

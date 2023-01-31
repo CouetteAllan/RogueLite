@@ -10,7 +10,7 @@ public class SpawnPointScript : MonoBehaviour
 
     private void Start()
     {
-        SpawnManager.Instance.OnEnemySetSpawn += SpawnRandomObject;
+        SpawnManager.Instance.SpawnEnemy += SpawnRandomObject;
     }
     public void SpawnRandomObject()
     {
@@ -20,6 +20,7 @@ public class SpawnPointScript : MonoBehaviour
             GameObject instantiateGO = Instantiate(objectsThatCanSpawn[/*Random.Range(0, objectsThatCanSpawn.Length)*/0],this.transform.position,Quaternion.identity);
             if (instantiateGO.TryGetComponent<EnemyEntity>(out EnemyEntity enemyEntity))
             {
+                SpawnManager.Instance.AddEnemy();
                 enemyEntity.enemyData = enemy_SOs[Random.Range(0, 2)];
                 enemyEntity.StartEnemy();
             }

@@ -7,20 +7,24 @@ public class SpawnManager : Singleton<SpawnManager>
     [SerializeField] GameObject[] spawnerPoints;
 
     public delegate void EnemySpawnerEvent();
-    public EnemySpawnerEvent OnEnemySpawn;
-    public EnemySpawnerEvent OnEnemySetSpawn;
+    public EnemySpawnerEvent SpawnEnemy;
+    public EnemySpawnerEvent NoMoreEnemies;
+
+    [SerializeField] private int nbEnemies = 0;
 
 
-    public void SetAllSpawners()
+    public void AddEnemy()
     {
-
-        foreach (var spawner in spawnerPoints)
-        {
-            spawner.GetComponent<SpawnPointScript>().SpawnRandomObject();
-        }
-
+        nbEnemies++;
     }
 
-
+    public void SubstractEnemy()
+    {
+        nbEnemies--;
+        if(nbEnemies <= 0)
+        {
+            NoMoreEnemies?.Invoke();
+        }
+    }
 
 }

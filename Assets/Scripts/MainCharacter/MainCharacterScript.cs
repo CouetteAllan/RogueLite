@@ -40,7 +40,7 @@ public class MainCharacterScript : Entity
     private Coroutine invincibleCoroutine;
     public delegate void PlayerChangeHealth(float value);
     public PlayerChangeHealth OnPlayerChangeHealth;
-    private bool doOnce = false;
+
 
 
     private void Awake()
@@ -105,7 +105,7 @@ public class MainCharacterScript : Entity
 
         if (Keyboard.current.bKey.wasPressedThisFrame)
         {
-            SpawnManager.Instance.SetAllSpawners();
+            SpawnManager.Instance.SpawnEnemy();
         }
     }
 
@@ -207,6 +207,12 @@ public class MainCharacterScript : Entity
         {
             pickable.OnPick(this);
         }
+
+        if(collision.TryGetComponent<IExit>(out IExit exit))
+        {
+            exit.OnExit(this);
+        }
+
     }
 
     public override void OnHit(float _value, IHitSource source)
