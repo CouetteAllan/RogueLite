@@ -105,7 +105,7 @@ public class MainCharacterScript : Entity
 
         if (Keyboard.current.bKey.wasPressedThisFrame)
         {
-            SpawnManager.Instance.SpawnEnemy();
+            EnemyManager.Instance.SpawnEnemy();
         }
     }
 

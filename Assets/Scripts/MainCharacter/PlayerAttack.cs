@@ -6,12 +6,12 @@ using UnityEngine.InputSystem;
 public class PlayerAttack : MonoBehaviour, IHitSource
 {
     private bool isUsingGamePad;
+    [SerializeField] GameObject hand;
 
     private Weapons actualWeapon;
     private float attackSpeed = 1f;
     private PlayerInput playerInput;
     private MainCharacterScript player;
-    [SerializeField] GameObject hand;
     [SerializeField] LayerMask layerAttack;
 
     public Vector2 range;
@@ -27,7 +27,6 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     public Vector2 LastInput { get; set; }
 
     [SerializeField] private float pushForceForward = 6f;
-    private Vector2 HandPosition => hand.transform.position;
 
     public delegate void Attack();
     public Attack attackHandle;
@@ -40,6 +39,8 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     public bool IsDead => false;
 
     private Coroutine attackCoroutine;
+    private delegate void AttackType();
+    private AttackType attackType;
 
     private List<IHittable> enemiesThatBeenHit = new List<IHittable>();
     
@@ -130,26 +131,12 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         hitbox.SetActive(true);
         offset = rb2D.position + MouseAimDir.normalized;
 
-        if (enemiesThatBeenHit != null)
-        {
-            foreach (IHittable enemy in enemiesThatBeenHit)
-            {
-                enemy.GotHit = false;
-            }
-        }
-        enemiesThatBeenHit.Clear();
-
-        if (attackCoroutine != null)
-            StopCoroutine(attackCoroutine);
-        attackCoroutine = StartCoroutine(ActiveFrameAttack(false));
-
-        hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
-        hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.2f, (actualWeapon.range / 20) * 1.2f, 0);
+        attackType();
     }
 
     private void GamePadAimingHandle()
     {
-        Collider2D[] enemiesInFront = Physics2D.OverlapCircleAll(rb2D.position + LastInput.normalized * 1.7f, 2.4f, layerAttack);
+        Collider2D[] enemiesInFront = Physics2D.OverlapCircleAll(rb2D.position + LastInput.normalized * 1.7f, 2.6f, layerAttack);
         Vector2 nearestDir = LastInput;
         Vector2 nearestPos;
         float minDistSquared = Mathf.Infinity;
@@ -178,6 +165,13 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         hitbox.SetActive(true);
 
         offset = rb2D.position + lastInput.normalized ;
+
+        attackType();
+        
+    }
+
+    private void MeleeAttack()
+    {
         if (enemiesThatBeenHit != null)
         {
             foreach (IHittable enemy in enemiesThatBeenHit)
@@ -188,9 +182,9 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         enemiesThatBeenHit.Clear();
         if (attackCoroutine != null)
             StopCoroutine(attackCoroutine);
-        attackCoroutine = StartCoroutine(ActiveFrameAttack(true));
+        attackCoroutine = StartCoroutine(ActiveFrameAttack(isUsingGamePad));
         hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
-        hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.2f , (actualWeapon.range / 20) * 1.2f, 0);
+        hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.4f, (actualWeapon.range / 20) * 1.4f, 0);
     }
 
     IEnumerator ActiveFrameAttack(bool usingGamePad)
@@ -228,6 +222,15 @@ public class PlayerAttack : MonoBehaviour, IHitSource
 
     }
 
+    private void RangedAttack()
+    {
+        hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
+        GameObject projectile = Instantiate(actualWeapon.projectile, this.rb2D.position, Quaternion.identity);
+        projectile.layer = 6;
+        projectile.GetComponent<ProjectileScript>().GotHit = true;
+        projectile.GetComponent<ProjectileScript>().SetProjectile(offset - rb2D.position, 12f, actualWeapon.damage,player);
+    }
+
     public void DeActivateHitBox()
     {
         //desactive la hitbox en fin d'animation
@@ -239,6 +242,15 @@ public class PlayerAttack : MonoBehaviour, IHitSource
     {
         this.actualWeapon = weapon;
         this.attackSpeed = weapon.attackRate;
+        switch (actualWeapon.weaponType)
+        {
+            case Weapons.WeaponType.Melee:
+                attackType = MeleeAttack;
+                break;
+            case Weapons.WeaponType.Ranged:
+                attackType = RangedAttack;
+                break;
+        }
         hand.GetComponent<SpriteRenderer>().sprite = actualWeapon.sprite;
     }
 

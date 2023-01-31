@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : Singleton<SpawnManager>
+public class EnemyManager : Singleton<EnemyManager>
 {
-    [SerializeField] GameObject[] spawnerPoints;
 
     public delegate void EnemySpawnerEvent();
     public EnemySpawnerEvent SpawnEnemy;

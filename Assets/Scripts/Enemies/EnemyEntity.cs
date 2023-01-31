@@ -34,6 +34,9 @@ public class EnemyEntity : Entity, IHitSource
     private Vector2 lastPlayerPos;
 
     [SerializeField] private GameObject particle;
+    private RoomSpawnHandle actualRoom;
+
+    [SerializeField] private HealthBarBehaviour healthBar;
     private void InitEnemyData()
     {
         animator = GetComponent<Animator>();
@@ -74,9 +77,10 @@ public class EnemyEntity : Entity, IHitSource
        
     }
 
-    public void StartEnemy()
+    public void StartEnemy(RoomSpawnHandle _actualRoom)
     {
         base.Start();
+        actualRoom = _actualRoom;
         InitEnemyData();
         switch (behaviour)
         {
@@ -91,6 +95,7 @@ public class EnemyEntity : Entity, IHitSource
         }
         StartCoroutine(AIFindTarget());
         GetComponent<CircleCollider2D>().radius = this.radiusHitbox;
+        healthBar.SetMaxHealth(maxHealth,this);
         this.EventOnHit += GotCanceled;
         this.OnDeath += StopAllCoroutines;
     }
@@ -143,14 +148,15 @@ public class EnemyEntity : Entity, IHitSource
     public override void OnHit(float _value, IHitSource source)
     {
 
-        StartCoroutine(WaitForMoving(0.3f));
+        StartCoroutine(WaitForMoving(0.2f));
         base.OnHit(_value, source);
+        healthBar.SetHealth(health);
 
     }
 
     public override void Die()
     {
-        SpawnManager.Instance.SubstractEnemy();
+        actualRoom.SubstractEnemy();
         base.Die();
     }
 
@@ -306,7 +312,7 @@ public class EnemyEntity : Entity, IHitSource
         yield return null;
         yield return StartCoroutine(WaitForAttack());
         gotCanceled = false;
-        yield return new WaitForSeconds(2f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
+        yield return new WaitForSeconds(0.5f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
         StartCoroutine(AIFindTarget());
         yield break;
     }
@@ -345,7 +351,7 @@ public class EnemyEntity : Entity, IHitSource
     {
         //instancier un projectile dans la direction du player.
         GameObject projectile = Instantiate(enemyData.projectile, this.rb2D.position, Quaternion.identity);
-        projectile.GetComponent<ProjectileScript>().SetProjectile((playerRB.position - this.rb2D.position).normalized, 10f,damage);
+        projectile.GetComponent<ProjectileScript>().SetProjectile((playerRB.position - this.rb2D.position).normalized, 12f,damage);
     }
 
 

@@ -6,7 +6,11 @@ using UnityEngine;
 public class LevelScript : MonoBehaviour, IExit
 {
     private bool canExit = false;
-    [SerializeField] public GameObject nextRoom;
+    [SerializeField] private bool isStart = false;
+    [SerializeField] private GameObject nextRoom;
+    private RoomSpawnHandle nextRoomScript;
+    private GameObject currentRoom;
+    private RoomSpawnHandle currentRoomScript;
     [SerializeField] private GameObject nextPosToGo;
     [SerializeField] private GameObject nextVirtualCamera;
     [SerializeField] private ChangeCameraScript changeCameraScript;
@@ -14,23 +18,36 @@ public class LevelScript : MonoBehaviour, IExit
     private void Awake()
     {
         changeCameraScript = GetComponent<ChangeCameraScript>();
+        nextRoomScript = nextRoom.GetComponent<RoomSpawnHandle>();
+
+        currentRoom = this.transform.parent.gameObject;
+        currentRoomScript = currentRoom.GetComponent<RoomSpawnHandle>();
     }
 
     public void OnExit(MainCharacterScript player)
     {
-        if (!canExit)
+        if (!canExit && !isStart)
             return;
         player.GetRigidbody2D().position = nextPosToGo.transform.position;
         changeCameraScript.ChangeCamera(nextVirtualCamera);
+        nextRoomScript.SpawnEnemy?.Invoke();
     }
 
     private void Start()
     {
-        SpawnManager.Instance.NoMoreEnemies += CanExit;
+        if (isStart)
+            return;
+        currentRoomScript.NoMoreEnemies += CanExit;
     }
 
     private void CanExit()
     {
         canExit = true;
+    }
+
+    private void OnDisable()
+    {
+        currentRoomScript.NoMoreEnemies -= CanExit;
+
     }
 }
