@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class AnimationScriptSynchro : MonoBehaviour
 {
-    public PlayerAttack playerAttackScript;
+    public PlayerAttack3D playerAttackScript;
 
     private void Awake()
     {
-        playerAttackScript = GetComponent<PlayerAttack>();
+        playerAttackScript = GetComponent<PlayerAttack3D>();
     }
 
     public void BeginAttack()

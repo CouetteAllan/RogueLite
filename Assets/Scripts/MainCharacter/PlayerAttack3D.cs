@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerAttack3D : MonoBehaviour, IHitSource
+public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 {
     private bool isUsingGamePad;
     [SerializeField] GameObject hand;
@@ -14,16 +14,17 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
     private MainCharacterScript3D player;
     [SerializeField] LayerMask layerAttack;
 
-    public Vector2 range;
-    public Vector2 offset;
+    public Vector3 range;
+    public Vector3 offset;
 
-    private Rigidbody2D rb2D;
+    private Rigidbody rb;
     public GameObject hitbox;
 
 
     public bool isAttacking = false;
     public Vector2 MouseAimDir { get; set; }
     private Vector2 lastInput;
+    private Vector3 lastInput3D => new Vector3(lastInput.x, 0, lastInput.y);
     public Vector2 LastInput { get; set; }
 
     [SerializeField] private float pushForceForward = 6f;
@@ -33,7 +34,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
     public Attack aimingHandle;
 
 
-    public Rigidbody2D SourceRigidbody2D => this.rb2D;
+    public Rigidbody SourceRigidbody => this.rb;
     public float Damage => actualWeapon.damage;
 
     public bool IsDead => false;
@@ -42,11 +43,11 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
     private delegate void AttackType();
     private AttackType attackType;
 
-    private List<IHittable> enemiesThatBeenHit = new List<IHittable>();
+    private List<IHittable3D> enemiesThatBeenHit = new List<IHittable3D>();
     
     void Awake()
     {
-        rb2D = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
         
         player = GetComponent<MainCharacterScript3D>();
     }
@@ -98,7 +99,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
             return;
         //Animation d'attaque
         player.GetAnimator().SetTrigger("Attack");
-        rb2D.velocity = Vector2.zero;
+        rb.velocity = Vector2.zero;
         isAttacking = true;
 
         //la visée est choisit en fonction de la manette ou bien de la souris
@@ -127,24 +128,24 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
 
     private void MouseAttackHandle()
     {
-        rb2D.AddForce(MouseAimDir.normalized * pushForceForward, ForceMode2D.Impulse);
+        rb.AddForce(MouseAimDir.normalized * pushForceForward, ForceMode.Impulse);
         hitbox.SetActive(true);
-        offset = rb2D.position + MouseAimDir.normalized;
+        //offset = rb.position + MouseAimDir.normalized;
 
         attackType();
     }
 
     private void GamePadAimingHandle()
     {
-        Collider2D[] enemiesInFront = Physics2D.OverlapCircleAll(rb2D.position + LastInput.normalized * 1.7f, 2.6f, layerAttack);
-        Vector2 nearestDir = LastInput;
-        Vector2 nearestPos;
+        Collider[] enemiesInFront = Physics.OverlapSphere(rb.position + new Vector3(LastInput.x,0,LastInput.y).normalized * 1.7f, 2.6f, layerAttack);
+        Vector3 nearestDir = new Vector3(LastInput.x, 0, LastInput.y);
+        Vector3 nearestPos;
         float minDistSquared = Mathf.Infinity;
-        Vector2 currentPos = this.rb2D.position;
+        Vector3 currentPos = this.rb.position;
 
         foreach (var enemy in enemiesInFront)
         {
-            Rigidbody2D rbEnemy = enemy.GetComponent<Rigidbody2D>();
+            Rigidbody rbEnemy = enemy.GetComponent<Rigidbody>();
 
             Vector3 directionToTarget = rbEnemy.position - currentPos;
             float dSqrToTarget = directionToTarget.sqrMagnitude;
@@ -156,15 +157,15 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
             }
 
         }
-        lastInput = nearestDir.normalized;
+        lastInput = new Vector2(nearestDir.x, nearestDir.z).normalized;
     }
 
     private void GamePadAttackHandle()
     {
-        rb2D.AddForce(lastInput.normalized * pushForceForward, ForceMode2D.Impulse);
+        rb.AddForce(lastInput3D.normalized * pushForceForward, ForceMode.Impulse);
         hitbox.SetActive(true);
 
-        offset = rb2D.position + lastInput.normalized ;
+        offset = rb.position + lastInput3D.normalized ;
 
         attackType();
         
@@ -183,8 +184,8 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
         if (attackCoroutine != null)
             StopCoroutine(attackCoroutine);
         attackCoroutine = StartCoroutine(ActiveFrameAttack(isUsingGamePad));
-        hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
-        hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.4f, (actualWeapon.range / 20) * 1.4f, 0);
+        hitbox.transform.position = offset;
+        hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.7f, 0.5f, (actualWeapon.range / 20) * 1.7f);
     }
 
     IEnumerator ActiveFrameAttack(bool usingGamePad)
@@ -194,17 +195,17 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
         while (isAttacking)
         {
             if(usingGamePad)
-                offset = rb2D.position + lastInput.normalized ;
+                offset = this.rb.position + lastInput3D.normalized ;
             else
-                offset = rb2D.position + mouseAim.normalized;
+                //offset = rb.position + mouseAim.normalized;
 
-            hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
-            Collider2D[] enemiesHit = Physics2D.OverlapCircleAll(offset, actualWeapon.range / 20, layerAttack);
+            hitbox.transform.position = offset;
+            Collider[] enemiesHit = Physics.OverlapSphere(offset, actualWeapon.range / 20, layerAttack);
             if(enemiesHit != null)
             {
                 foreach (var enemy in enemiesHit)
                 {
-                    IHittable hitObject = enemy.GetComponent<IHittable>();
+                    IHittable3D hitObject = enemy.GetComponent<IHittable3D>();
                     hitObject.OnHit(-actualWeapon.damage, this);
                     if (!hitObject.GotHit)
                     {
@@ -225,10 +226,10 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
     private void RangedAttack()
     {
         hitbox.transform.position = new Vector3(offset.x, offset.y, 0);
-        GameObject projectile = Instantiate(actualWeapon.projectile, this.rb2D.position, Quaternion.identity);
+        GameObject projectile = Instantiate(actualWeapon.projectile, this.rb.position, Quaternion.identity);
         projectile.layer = 6;
         projectile.GetComponent<ProjectileScript>().GotHit = true;
-        projectile.GetComponent<ProjectileScript>().SetProjectile(offset - rb2D.position, 12f, actualWeapon.damage,player);
+        //projectile.GetComponent<ProjectileScript>().SetProjectile(offset - rb2D.position, 12f, actualWeapon.damage,player);
     }
 
     public void DeActivateHitBox()
@@ -255,8 +256,8 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource
     }
 
 
-    /*private void OnDrawGizmosSelected()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(offset, actualWeapon.range / 20);
-    }*/
+    }
 }

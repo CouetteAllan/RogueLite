@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class MainCharacterScript3D : Entity
+public class MainCharacterScript3D : Entity3D
 {
-    [SerializeField] private Vector2 acceleration;
-    [SerializeField] private Vector2 decceleration;
-    [SerializeField] private Vector2 velocityPower;
+    [SerializeField] private AnimationCurve accelerationCurve;
+    [SerializeField] private AnimationCurve decelerationCurve;
+    private float timeCurve = 0f;
 
     [SerializeField] private float invincibleTime = 2f;
     [SerializeField] private float dashInvincibleTime = 1f;
@@ -33,7 +33,7 @@ public class MainCharacterScript3D : Entity
     private bool isMoving => input != Vector2.zero;
 
     public bool startWithWeapon = false;
-    [HideInInspector] public Weapons weapon;
+    [SerializeField] private Weapons weapon;
 
     private bool canMove = true;
 
@@ -53,9 +53,15 @@ public class MainCharacterScript3D : Entity
 
         playerInputAction.Player.Enable();
         playerInputAction.Player.Attack.performed += playerAttackScript.OnAttack;
-        playerInputAction.Player.MouseAim.performed += OnMouseChangePos;
+        //playerInputAction.Player.MouseAim.performed += OnMouseChangePos;
         playerInputAction.Player.Dash.performed += Dash;
+        playerInputAction.Player.Move.canceled += Move_canceled;
+        playerInputAction.Player.Move.started += Move_started;
     }
+
+   
+
+
 
 
 
@@ -101,12 +107,8 @@ public class MainCharacterScript3D : Entity
         }
 
         animator.SetBool("IsMoving", isMoving);
+        animator.SetFloat("ZSpeed", lastInput.y);
 
-
-        if (Keyboard.current.bKey.wasPressedThisFrame)
-        {
-            EnemyManager.Instance.SpawnEnemy();
-        }
     }
 
     private void FixedUpdate()
@@ -118,12 +120,22 @@ public class MainCharacterScript3D : Entity
     {
         if (isDashing)
             return;
-        var targetSpeed = movementSpeed * input;
-        var speedDiff = targetSpeed - rb2D.velocity;
-        var accelRate = new Vector2(Mathf.Abs(targetSpeed.x) > 0.01f ? acceleration.x : decceleration.x, Mathf.Abs(targetSpeed.y) > 0.01f ? acceleration.y : decceleration.y);
-        var movement = new Vector2(Mathf.Pow(Mathf.Abs(speedDiff.x) * accelRate.x, velocityPower.x) * Mathf.Sign(speedDiff.x), Mathf.Pow(Mathf.Abs(speedDiff.y) * accelRate.y, velocityPower.y) * Mathf.Sign(speedDiff.y));
 
-        this.rb2D.AddForce(movement,ForceMode2D.Impulse);
+        Vector3 targetMovement = new Vector3(input.x, 0, input.y).normalized;
+
+        AnimationCurve speedcurve = isMoving ? accelerationCurve : decelerationCurve;
+
+        rb.velocity = targetMovement * movementSpeed * speedcurve.Evaluate(timeCurve);
+    }
+
+    private void Move_canceled(InputAction.CallbackContext context)
+    {
+        timeCurve = 0f;
+    }
+
+    private void Move_started(InputAction.CallbackContext context)
+    {
+        timeCurve = 0f;
     }
 
     private void Dash(InputAction.CallbackContext context)
@@ -146,8 +158,8 @@ public class MainCharacterScript3D : Entity
 
         isDashing = true;
         //Va rapidement dans une direction
-        this.rb2D.velocity = Vector2.zero;
-        this.rb2D.AddForce(lastInput.normalized * dashForce, ForceMode2D.Impulse);
+        this.rb.velocity = Vector3.zero;
+        this.rb.AddForce(lastInput.normalized * dashForce, ForceMode.Impulse);
         trail.emitting = true;
 
 
@@ -180,29 +192,29 @@ public class MainCharacterScript3D : Entity
         this.damage = weaponPickedUpData.damage;
     }
 
-    private void OnMouseChangePos(InputAction.CallbackContext context)
+    /*private void OnMouseChangePos(InputAction.CallbackContext context)
     {
         mouseAim = context.action.ReadValue<Vector2>();
         Vector2 realMousePos = Camera.main.ScreenToWorldPoint(new Vector3(mouseAim.x,mouseAim.y,Camera.main.nearClipPlane));
-        Vector2 dir = realMousePos - rb2D.position;
+        Vector2 dir = realMousePos - rb.position;
         playerAttackScript.MouseAimDir = dir;
-    }
+    }*/
 
     public Animator GetAnimator()
     {
         return animator;
     }
 
-    public Rigidbody2D GetRigidbody2D()
+    public Rigidbody GetRigidbody2D()
     {
-        return rb2D;
+        return rb;
     }
 
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
 
-        IPickable pickable = collision.GetComponent<IPickable>();
+        IPickable3D pickable = collision.GetComponent<IPickable3D>();
         if(pickable != null)
         {
             pickable.OnPick(this);
@@ -215,14 +227,14 @@ public class MainCharacterScript3D : Entity
 
     }
 
-    public override void OnHit(float _value, IHitSource source)
+    public override void OnHit(float _value, IHitSource3D source)
     {
 
         base.OnHit(_value, source);
         StartCoroutine(InvincibilityHandle(invincibleTime));
     }
 
-    public override void ChangeHealth(float _value, IHitSource source = null)
+    public override void ChangeHealth(float _value, IHitSource3D source = null)
     {
         base.ChangeHealth(_value, source);
         OnPlayerChangeHealth(health + _value);
@@ -237,7 +249,7 @@ public class MainCharacterScript3D : Entity
     {
         playerInputAction.Player.Disable();
         playerInputAction.Player.Attack.performed -= playerAttackScript.OnAttack;
-        playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
+        //playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
     }
 
     IEnumerator InvincibilityHandle(float time)
