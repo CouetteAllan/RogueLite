@@ -247,7 +247,7 @@ MonoBehaviour:
   health: 100
   maxHealth: 100
   damage: 0
-  movementSpeed: 55
+  movementSpeed: 11
   pushForce: 10
   graphObject: {fileID: 3752699502146245631}
   accelerationCurve:
@@ -255,21 +255,30 @@ MonoBehaviour:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.15200806
-      inSlope: 0.3927381
-      outSlope: 0.3927381
+      value: 0.097802736
+      inSlope: 0.13606025
+      outSlope: 0.13606025
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.11940299
+      outWeight: 0.1110556
     - serializedVersion: 3
-      time: 0.3
-      value: 1.0023575
-      inSlope: 5.8365455
-      outSlope: 5.8365455
+      time: 0.19244546
+      value: 0.36095515
+      inSlope: 1.1329559
+      outSlope: 1.1329559
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.0447761
+      inWeight: 0.09717289
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.40149254
+      value: 1
+      inSlope: 3.5014584
+      outSlope: 3.5014584
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.03496684
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
@@ -309,7 +318,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   invincibleTime: 2
   dashInvincibleTime: 1
-  dashForce: 1
+  dashForce: 50
   dashCooldown: 1
   trail: {fileID: 3752699502704651482}
   input: {x: 0, y: 0}
@@ -386,7 +395,7 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   hitbox: {fileID: 0}
   isAttacking: 0
-  pushForceForward: 6
+  pushForceForward: 7
 --- !u!65 &538507526268917133
 BoxCollider:
   m_ObjectHideFlags: 0

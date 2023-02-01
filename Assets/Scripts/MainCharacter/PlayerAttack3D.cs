@@ -101,9 +101,9 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
             return;
         //Animation d'attaque
         player.GetAnimator().SetTrigger("Attack");
-        rb.velocity = Vector2.zero;
+        rb.velocity = rb.velocity / 2f;
         isAttacking = true;
-
+        player.CanMove = false;
         //la visée est choisit en fonction de la manette ou bien de la souris
         aimingHandle();
     }
@@ -239,6 +239,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         //desactive la hitbox en fin d'animation
         hitbox.SetActive(false);
         isAttacking = false;
+        player.CanMove = true;
     }
 
     public void SetActualWeapon(Weapons weapon)

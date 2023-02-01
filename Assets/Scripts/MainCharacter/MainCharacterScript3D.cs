@@ -32,10 +32,12 @@ public class MainCharacterScript3D : Entity3D
 
     private bool isMoving => input != Vector2.zero;
 
+
     public bool startWithWeapon = false;
     [SerializeField] private Weapons weapon;
 
     private bool canMove = true;
+    public bool CanMove { get => canMove; set => canMove = value; }
 
     private Coroutine invincibleCoroutine;
     public delegate void PlayerChangeHealth(float value);
@@ -95,6 +97,8 @@ public class MainCharacterScript3D : Entity3D
 
             }
         }
+        else
+            input = Vector3.zero;
         if (Mathf.Abs(input.x) > 0.009f || Mathf.Abs(input.y) > 0.009f)
             playerAttackScript.LastInput = lastInput;
         if(input.x > 0.01f && isFlipped)
@@ -108,6 +112,8 @@ public class MainCharacterScript3D : Entity3D
 
         animator.SetBool("IsMoving", isMoving);
         animator.SetFloat("ZSpeed", lastInput.y);
+
+        timeCurve += Time.deltaTime;
 
     }
 
@@ -125,7 +131,7 @@ public class MainCharacterScript3D : Entity3D
 
         AnimationCurve speedcurve = isMoving ? accelerationCurve : decelerationCurve;
 
-        rb.velocity = targetMovement * movementSpeed * speedcurve.Evaluate(timeCurve);
+        rb.velocity = new Vector3(targetMovement.x * (movementSpeed * speedcurve.Evaluate(timeCurve)), rb.velocity.y,targetMovement.z * (movementSpeed * speedcurve.Evaluate(timeCurve))) ;
     }
 
     private void Move_canceled(InputAction.CallbackContext context)

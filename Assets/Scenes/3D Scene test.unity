@@ -198,8 +198,48 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
-      propertyPath: dashForce
-      value: 50
+      propertyPath: decelerationCurve.m_Curve.Array.data[1].time
+      value: 0.18959022
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[2].time
+      value: 0.34694484
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[1].value
+      value: 0.2062145
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[2].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[0].inSlope
+      value: -7.829157
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[1].inSlope
+      value: -1.3198696
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[0].outSlope
+      value: -7.829157
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[1].inWeight
+      value: 0.19533391
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[1].outSlope
+      value: -1.3198696
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[0].outWeight
+      value: 0.13834995
+      objectReference: {fileID: 0}
+    - target: {fileID: 2376902697149153164, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: decelerationCurve.m_Curve.Array.data[1].outWeight
+      value: 0.29022846
       objectReference: {fileID: 0}
     - target: {fileID: 3752699502455542833, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
       propertyPath: m_RootOrder
@@ -249,14 +289,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCharacter3D
       objectReference: {fileID: 0}
-    - target: {fileID: 3752699503775980603, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
-      propertyPath: m_SortingOrder
-      value: 11
-      objectReference: {fileID: 0}
     - target: {fileID: 8955158973526170109, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
       propertyPath: hitbox
       value: 
       objectReference: {fileID: 1814177713}
+    - target: {fileID: 8955158973526170109, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: pushForceForward
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
 --- !u!4 &509066514 stripped
