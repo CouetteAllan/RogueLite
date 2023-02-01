@@ -8,11 +8,14 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     private bool isUsingGamePad;
     [SerializeField] GameObject hand;
 
+    private Camera _cam;
     private Weapons actualWeapon;
     private float attackSpeed = 1f;
     private PlayerInput playerInput;
     private MainCharacterScript3D player;
+    private Animator animator;
     [SerializeField] LayerMask layerAttack;
+    [SerializeField] LayerMask layerClick;
 
     public Vector3 range;
     public Vector3 offset;
@@ -24,8 +27,8 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     public bool isAttacking = false;
     public Vector2 MouseAimDir { get; set; }
     private Vector2 lastInput;
+    public Vector2 LastInput { set => lastInput = value; }
     private Vector3 lastInput3D => new Vector3(lastInput.x, 0, lastInput.y);
-    public Vector2 LastInput { get; set; }
 
     [SerializeField] private float pushForceForward = 6f;
 
@@ -44,16 +47,24 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     private AttackType attackType;
 
     private List<IHittable3D> enemiesThatBeenHit = new List<IHittable3D>();
-    
+
+
+    private void OnDisable()
+    {
+        InputManager.playerInputAction.Player.Attack.performed -= OnAttack;
+    }
     void Awake()
     {
+        InputManager.playerInputAction.Player.Attack.performed += OnAttack;
         rb = GetComponent<Rigidbody>();
-        
-        player = GetComponent<MainCharacterScript3D>();
+        playerInput = GetComponent<PlayerInput>();
+        playerInput.onControlsChanged += PlayerInput_onControlsChanged;
+
     }
 
     private void Start()
     {
+        _cam = Camera.main;
         if (isUsingGamePad)
         {
             attackHandle = GamePadAttackHandle;
@@ -66,11 +77,9 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
             aimingHandle = MouseAimingHandle;
 
         }
-        playerInput = GetComponent<PlayerInput>();
-
-        playerInput.onControlsChanged += PlayerInput_onControlsChanged;
-
-        player.GetAnimator().SetFloat("AttackSpeedModifier", attackSpeed);
+        player = GetComponent<MainCharacterScript3D>();
+        animator = this.GetComponent<Animator>();
+        animator.SetFloat("AttackSpeedModifier", attackSpeed);
     }
 
     private void PlayerInput_onControlsChanged(PlayerInput obj)
@@ -100,7 +109,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         if (isAttacking)
             return;
         //Animation d'attaque
-        player.GetAnimator().SetTrigger("Attack");
+        animator.SetTrigger("Attack");
         rb.velocity = rb.velocity / 2f;
         isAttacking = true;
         player.CanMove = false;
@@ -115,14 +124,21 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         attackHandle();
     }
 
-
+    private Vector3 GetMousePosInTheWorld()
+    {
+        var ray = _cam.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Physics.Raycast(ray, out RaycastHit hitInfo, 100000f, layerClick);
+        return hitInfo.point;
+    }
     private void MouseAimingHandle()
     {
-        if (MouseAimDir.normalized.x > 0.01f && player.isFlipped == true)
+        var mousePos = GetMousePosInTheWorld();
+        var mouseAimDir = mousePos - rb.position;
+        if (mouseAimDir.normalized.x > 0.01f && player.isFlipped == true)
         {
             player.Flip();
         }
-        else if (MouseAimDir.normalized.x < -0.01f && player.isFlipped == false)
+        else if (mouseAimDir.normalized.x < -0.01f && player.isFlipped == false)
         {
             player.Flip();
         }
@@ -130,17 +146,19 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 
     private void MouseAttackHandle()
     {
-        rb.AddForce(MouseAimDir.normalized * pushForceForward, ForceMode.Impulse);
+        var mousePos = GetMousePosInTheWorld();
+        var mouseAimDir = mousePos - rb.position;
+        rb.AddForce(mouseAimDir.normalized * pushForceForward, ForceMode.Impulse);
         hitbox.SetActive(true);
-        //offset = rb.position + MouseAimDir.normalized;
+        offset = rb.position + mouseAimDir.normalized;
 
         attackType();
     }
 
     private void GamePadAimingHandle()
     {
-        Collider[] enemiesInFront = Physics.OverlapSphere(rb.position + new Vector3(LastInput.x,0,LastInput.y).normalized * 1.7f, 2.6f, layerAttack);
-        Vector3 nearestDir = new Vector3(LastInput.x, 0, LastInput.y);
+        Collider[] enemiesInFront = Physics.OverlapSphere(rb.position + lastInput3D.normalized * 1.7f, 2.6f, layerAttack);
+        Vector3 nearestDir = lastInput3D.normalized;
         Vector3 nearestPos;
         float minDistSquared = Mathf.Infinity;
         Vector3 currentPos = this.rb.position;
@@ -192,14 +210,15 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 
     IEnumerator ActiveFrameAttack(bool usingGamePad)
     {
-        Vector2 mouseAim = MouseAimDir;
+        var mousePos = GetMousePosInTheWorld();
+        var mouseAimDir = mousePos - rb.position;
         Debug.Log(usingGamePad);
         while (isAttacking)
         {
             if(usingGamePad)
                 offset = this.rb.position + lastInput3D.normalized;
-            /*else
-                offset = rb.position + mouseAim.normalized;*/
+            else
+                offset = rb.position + mouseAimDir.normalized;
 
             hitbox.transform.position = offset;
             Collider[] enemiesHit = Physics.OverlapSphere(offset, actualWeapon.range / 20, layerAttack);

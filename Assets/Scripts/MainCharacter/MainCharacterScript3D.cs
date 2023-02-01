@@ -20,8 +20,6 @@ public class MainCharacterScript3D : Entity3D
     [SerializeField] private Vector2 input;
     private Vector2 lastInput;
 
-    public PlayerInputAction playerInputAction;
-    private PlayerInput playerInput;
     [HideInInspector] public Vector2 mouseAim;
 
     [HideInInspector] public bool isFlipped = false;
@@ -43,28 +41,23 @@ public class MainCharacterScript3D : Entity3D
     public delegate void PlayerChangeHealth(float value);
     public PlayerChangeHealth OnPlayerChangeHealth;
 
-
+    private void OnDisable()
+    {
+        //playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
+        InputManager.playerInputAction.Player.Dash.performed -= Dash;
+        InputManager.playerInputAction.Player.Move.canceled -= Move_canceled;
+        InputManager.playerInputAction.Player.Move.started -= Move_started;
+    }
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
-        playerInput = GetComponent<PlayerInput>();
+        //InputManager.playerInputAction.Player.Enable();
+        InputManager.playerInputAction.Player.Dash.performed += Dash;
+        InputManager.playerInputAction.Player.Move.canceled += Move_canceled;
+        InputManager.playerInputAction.Player.Move.started += Move_started;
 
-        playerInputAction = new PlayerInputAction();
-        playerAttackScript = GetComponent<PlayerAttack3D>();
-
-        playerInputAction.Player.Enable();
-        playerInputAction.Player.Attack.performed += playerAttackScript.OnAttack;
-        //playerInputAction.Player.MouseAim.performed += OnMouseChangePos;
-        playerInputAction.Player.Dash.performed += Dash;
-        playerInputAction.Player.Move.canceled += Move_canceled;
-        playerInputAction.Player.Move.started += Move_started;
+        
     }
-
-   
-
-
-
 
 
     // Start is called before the first frame update
@@ -72,6 +65,7 @@ public class MainCharacterScript3D : Entity3D
     {
         base.Start();
         //GameManager.Instance.InitPlayer(this);
+        playerAttackScript = GetComponent<PlayerAttack3D>();
         if (startWithWeapon)
         {
             PickUpWeapon(weapon);
@@ -81,6 +75,7 @@ public class MainCharacterScript3D : Entity3D
         health = maxHealth;
         //UIManager.Instance.SetMaxHealth(maxHealth,this);
         //UIManager.Instance.SetUIHealth(maxHealth);
+        animator = GetComponent<Animator>();
     }
 
 
@@ -90,7 +85,7 @@ public class MainCharacterScript3D : Entity3D
     {
         if (canMove)
         {
-            input = playerInputAction.Player.Move.ReadValue<Vector2>();
+            input = InputManager.playerInputAction.Player.Move.ReadValue<Vector2>();
             if (Mathf.Abs(input.x) > 0.009f || Mathf.Abs(input.y) > 0.009f)
             {
                 lastInput = input;
@@ -101,11 +96,11 @@ public class MainCharacterScript3D : Entity3D
             input = Vector3.zero;
         if (Mathf.Abs(input.x) > 0.009f || Mathf.Abs(input.y) > 0.009f)
             playerAttackScript.LastInput = lastInput;
-        if(input.x > 0.01f && isFlipped)
+        if (input.x > 0.01f && isFlipped)
         {
             Flip();
         }
-        else if(input.x < -0.01f && !isFlipped)
+        else if (input.x < -0.01f && !isFlipped)
         {
             Flip();
         }
@@ -131,7 +126,7 @@ public class MainCharacterScript3D : Entity3D
 
         AnimationCurve speedcurve = isMoving ? accelerationCurve : decelerationCurve;
 
-        rb.velocity = new Vector3(targetMovement.x * (movementSpeed * speedcurve.Evaluate(timeCurve)), rb.velocity.y,targetMovement.z * (movementSpeed * speedcurve.Evaluate(timeCurve))) ;
+        rb.velocity = new Vector3(targetMovement.x * (movementSpeed * speedcurve.Evaluate(timeCurve)), rb.velocity.y, targetMovement.z * (movementSpeed * speedcurve.Evaluate(timeCurve)));
     }
 
     private void Move_canceled(InputAction.CallbackContext context)
@@ -150,7 +145,7 @@ public class MainCharacterScript3D : Entity3D
             return;
 
         StartCoroutine(DashCoroutine());
-        
+
     }
 
     IEnumerator DashCoroutine()
@@ -165,7 +160,7 @@ public class MainCharacterScript3D : Entity3D
         isDashing = true;
         //Va rapidement dans une direction
         this.rb.velocity = Vector3.zero;
-        this.rb.AddForce(new Vector3(lastInput.x,0,lastInput.y) * dashForce, ForceMode.Impulse);
+        this.rb.AddForce(new Vector3(lastInput.x, 0, lastInput.y) * dashForce, ForceMode.Impulse);
         trail.emitting = true;
 
 
@@ -187,7 +182,7 @@ public class MainCharacterScript3D : Entity3D
         Vector3 currentScale = animator.gameObject.transform.localScale;
         currentScale.x *= -1;
         animator.gameObject.transform.localScale = currentScale;
-        
+
 
     }
 
@@ -221,7 +216,7 @@ public class MainCharacterScript3D : Entity3D
     {
 
         IPickable3D pickable = collision.GetComponent<IPickable3D>();
-        if(pickable != null)
+        if (pickable != null)
         {
             pickable.OnPick(this);
         }
@@ -253,8 +248,7 @@ public class MainCharacterScript3D : Entity3D
 
     private void OnDestroy()
     {
-        playerInputAction.Player.Disable();
-        playerInputAction.Player.Attack.performed -= playerAttackScript.OnAttack;
+        InputManager.playerInputAction.Player.Disable();
         //playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
     }
 
@@ -273,7 +267,7 @@ public class MainCharacterScript3D : Entity3D
         isInvincible = false;
         yield break;
     }
-    
+
     IEnumerator DashInvincibilityHandle(float time)
     {
         isInvincible = true;

@@ -289,23 +289,23 @@ MonoBehaviour:
     - serializedVersion: 3
       time: 0
       value: 1.0023575
-      inSlope: -17.478052
-      outSlope: -17.478052
+      inSlope: -7.829157
+      outSlope: -7.829157
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.038903903
+      outWeight: 0.13834995
     - serializedVersion: 3
-      time: 0.031161856
+      time: 0.18959022
       value: 0.2062145
-      inSlope: -1.3464425
-      outSlope: -1.3464425
+      inSlope: -1.3198696
+      outSlope: -1.3198696
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.16508457
+      inWeight: 0.19533391
+      outWeight: 0.29022846
     - serializedVersion: 3
-      time: 0.25047606
+      time: 0.34694484
       value: 0
       inSlope: -0.1450051
       outSlope: -0.1450051
@@ -391,11 +391,14 @@ MonoBehaviour:
   layerAttack:
     serializedVersion: 2
     m_Bits: 768
+  layerClick:
+    serializedVersion: 2
+    m_Bits: 1280
   range: {x: 0, y: 0, z: 0}
   offset: {x: 0, y: 0, z: 0}
   hitbox: {fileID: 0}
   isAttacking: 0
-  pushForceForward: 7
+  pushForceForward: 30
 --- !u!65 &538507526268917133
 BoxCollider:
   m_ObjectHideFlags: 0
