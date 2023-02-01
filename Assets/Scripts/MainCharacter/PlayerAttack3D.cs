@@ -79,11 +79,13 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         {
             attackHandle = GamePadAttackHandle;
             aimingHandle = GamePadAimingHandle;
+            isUsingGamePad = true;
         }
         else
         {
             attackHandle = MouseAttackHandle;
             aimingHandle = MouseAimingHandle;
+            isUsingGamePad = false;
         }
 
 
@@ -191,13 +193,13 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     IEnumerator ActiveFrameAttack(bool usingGamePad)
     {
         Vector2 mouseAim = MouseAimDir;
-        
+        Debug.Log(usingGamePad);
         while (isAttacking)
         {
             if(usingGamePad)
-                offset = this.rb.position + lastInput3D.normalized ;
-            else
-                //offset = rb.position + mouseAim.normalized;
+                offset = this.rb.position + lastInput3D.normalized;
+            /*else
+                offset = rb.position + mouseAim.normalized;*/
 
             hitbox.transform.position = offset;
             Collider[] enemiesHit = Physics.OverlapSphere(offset, actualWeapon.range / 20, layerAttack);

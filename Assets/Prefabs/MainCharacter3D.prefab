@@ -316,7 +316,7 @@ MonoBehaviour:
   mouseAim: {x: 0, y: 0}
   isFlipped: 0
   startWithWeapon: 1
-  weapon: {fileID: 0}
+  weapon: {fileID: 11400000, guid: 1d01d9f5517283747a0e84c2461fa009, type: 2}
 --- !u!95 &1835471835
 Animator:
   serializedVersion: 4
@@ -349,7 +349,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb01f4de5b947e940a5fa8637cc1c9ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerAttackScript: {fileID: 0}
+  playerAttackScript: {fileID: 8955158973526170109}
 --- !u!54 &509066507
 Rigidbody:
   m_ObjectHideFlags: 0

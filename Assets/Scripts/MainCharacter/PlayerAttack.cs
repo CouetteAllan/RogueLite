@@ -78,11 +78,13 @@ public class PlayerAttack : MonoBehaviour, IHitSource
         {
             attackHandle = GamePadAttackHandle;
             aimingHandle = GamePadAimingHandle;
+            isUsingGamePad = true;
         }
         else
         {
             attackHandle = MouseAttackHandle;
             aimingHandle = MouseAimingHandle;
+            isUsingGamePad = false;
         }
 
 

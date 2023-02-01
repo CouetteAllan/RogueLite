@@ -159,7 +159,7 @@ public class MainCharacterScript3D : Entity3D
         isDashing = true;
         //Va rapidement dans une direction
         this.rb.velocity = Vector3.zero;
-        this.rb.AddForce(lastInput.normalized * dashForce, ForceMode.Impulse);
+        this.rb.AddForce(new Vector3(lastInput.x,0,lastInput.y) * dashForce, ForceMode.Impulse);
         trail.emitting = true;
 
 
