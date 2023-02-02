@@ -217,7 +217,7 @@ public class EnemyEntity : Entity, IHitSource
         //tant que joueur pas trouvé
         while (player == null)
         {
-            playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius * 4, playerLayer);
+            playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius * 6, playerLayer);
             if (playerInRange != null)
             {
                 player = playerInRange.GetComponent<MainCharacterScript>();
@@ -225,6 +225,7 @@ public class EnemyEntity : Entity, IHitSource
             }
             yield return new WaitForSeconds(0.1f);
         }
+
         switch (behaviour)
         {
             case EnemySO.Behaviour.Melee:

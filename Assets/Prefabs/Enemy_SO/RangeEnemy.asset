@@ -18,6 +18,7 @@ MonoBehaviour:
   name: Ranged
   damage: 6
   rangeRadius: 10
+  rangeSight: 20
   attackSpeed: 1
   enemySprite: {fileID: 21300000, guid: a04ecc9d5e12d5d449077414eb86635e, type: 3}
   radiusHitBox: 1

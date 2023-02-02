@@ -14,6 +14,8 @@ public class EnemyEntity3D : Entity3D, IHitSource3D
     private Rigidbody playerRB;
     private bool canMove = true;
     private bool inAttackRange;
+    private float range;
+    private float rangeSight;
     private float radiusHitbox;
     private EnemySO.Behaviour behaviour;
     public LayerMask playerLayer;
@@ -49,6 +51,8 @@ public class EnemyEntity3D : Entity3D, IHitSource3D
         this.movementSpeed = enemyData.speed;
         this.behaviour = enemyData.behaviour;
         this.radiusHitbox = enemyData.radiusHitBox;
+        this.range = enemyData.rangeRadius;
+        this.rangeSight = enemyData.rangeSight;
     }
 
     private void Awake()
@@ -195,7 +199,7 @@ public class EnemyEntity3D : Entity3D, IHitSource3D
         switch (behaviour)
         {
             case EnemySO.Behaviour.Melee:
-                playerInRange = Physics.OverlapSphere(this.rb.position, enemyData.rangeRadius * 3, playerLayer);
+                playerInRange = Physics.OverlapSphere(this.rb.position, rangeSight, playerLayer);
                 if (playerInRange != null)
                 {
                     foreach (var p in playerInRange)
@@ -226,7 +230,7 @@ public class EnemyEntity3D : Entity3D, IHitSource3D
         //tant que joueur pas trouvé
         while (player == null)
         {
-            playerInRange = Physics.OverlapSphere(this.rb.position, enemyData.rangeRadius * 4, playerLayer);
+            playerInRange = Physics.OverlapSphere(this.rb.position, rangeSight, playerLayer);
             if (playerInRange != null)
             {
                 foreach (var p in playerInRange)

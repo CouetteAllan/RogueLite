@@ -12,6 +12,7 @@ public class EnemySO : ScriptableObject
     public new string name;
     public float damage;
     public float rangeRadius = 2f;
+    public float rangeSight = 4f;
 
     public float attackSpeed = 1;
 

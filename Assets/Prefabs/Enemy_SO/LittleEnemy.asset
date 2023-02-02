@@ -18,6 +18,7 @@ MonoBehaviour:
   name: Oui
   damage: 5
   rangeRadius: 1.5
+  rangeSight: 20
   attackSpeed: 1
   enemySprite: {fileID: 580100881, guid: d9c99eb1291dcfc488e4c5a67732cbeb, type: 3}
   radiusHitBox: 0.5
