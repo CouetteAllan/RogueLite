@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class HealthBarBehaviour : MonoBehaviour
 {
     [SerializeField] private Slider slider;
-    private EnemyEntity enemy;
+    private EnemyEntity3D enemy;
     private float enemyHealth;
     private float enemyMaxHealth;
     private Coroutine fillBarCoroutine;
 
-    public void SetMaxHealth(float health, EnemyEntity _enemy)
+    public void SetMaxHealth(float health, EnemyEntity3D _enemy)
     {
         slider.maxValue = health;
         enemyMaxHealth = health;

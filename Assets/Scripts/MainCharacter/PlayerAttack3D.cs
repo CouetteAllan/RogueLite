@@ -134,6 +134,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     {
         var mousePos = GetMousePosInTheWorld();
         var mouseAimDir = mousePos - rb.position;
+        mouseAimDir.y = 0;
         if (mouseAimDir.normalized.x > 0.01f && player.isFlipped == true)
         {
             player.Flip();
@@ -148,6 +149,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     {
         var mousePos = GetMousePosInTheWorld();
         var mouseAimDir = mousePos - rb.position;
+        mouseAimDir.y = 0;
         rb.AddForce(mouseAimDir.normalized * pushForceForward, ForceMode.Impulse);
         hitbox.SetActive(true);
         offset = rb.position + mouseAimDir.normalized;
@@ -195,7 +197,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     {
         if (enemiesThatBeenHit != null)
         {
-            foreach (IHittable enemy in enemiesThatBeenHit)
+            foreach (IHittable3D enemy in enemiesThatBeenHit)
             {
                 enemy.GotHit = false;
             }
@@ -212,6 +214,8 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     {
         var mousePos = GetMousePosInTheWorld();
         var mouseAimDir = mousePos - rb.position;
+        mouseAimDir.y = 0;
+
         Debug.Log(usingGamePad);
         while (isAttacking)
         {
@@ -278,8 +282,4 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     }
 
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.DrawWireSphere(offset, actualWeapon.range / 20);
-    }
 }

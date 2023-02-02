@@ -16,15 +16,15 @@ public class UIManager : Singleton<UIManager>
     private Coroutine fillBarCoroutine;
     private Coroutine txtCoroutine;
 
-    private MainCharacterScript player = null;
-    public void SetMaxHealth(float health, MainCharacterScript player)
+    private MainCharacterScript3D player = null;
+    public void SetMaxHealth(float health, MainCharacterScript3D player)
     {
         h_Slider.maxValue = health;
         playerMaxHealth = health;
         playerHealth = health;
         h_Fill.color = h_Gradient.Evaluate(1);
         this.player = player;
-        player.OnPlayerChangeHealth += SetUIHealth;
+        MainCharacterScript3D.playerChangeHealth += SetUIHealth;
 
     }
 

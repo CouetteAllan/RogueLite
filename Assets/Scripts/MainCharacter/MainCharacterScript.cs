@@ -71,7 +71,7 @@ public class MainCharacterScript : Entity
         }
         trail.emitting = false;
         health = maxHealth;
-        UIManager.Instance.SetMaxHealth(maxHealth,this);
+        //UIManager.Instance.SetMaxHealth(maxHealth,this);
         UIManager.Instance.SetUIHealth(maxHealth);
     }
 

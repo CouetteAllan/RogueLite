@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeMonkey.Utils;
 
-public class EnemyEntity : Entity, IHitSource
+public class EnemyEntity3D : Entity3D, IHitSource3D
 {
     public EnemySO enemyData;
 
     private new string name = "";
 
-    private MainCharacterScript player;
-    private Vector2 playerPos;
-    private Rigidbody2D playerRB;
+    private MainCharacterScript3D player;
+    private Vector3 playerPos;
+    private Rigidbody playerRB;
     private bool canMove = true;
     private bool inAttackRange;
     private float radiusHitbox;
@@ -25,13 +25,13 @@ public class EnemyEntity : Entity, IHitSource
     public delegate void AttackType();
     public AttackType startAttack;
 
-    public Rigidbody2D SourceRigidbody2D => this.rb2D;
+    public Rigidbody SourceRigidbody => this.rb;
 
     public float Damage => enemyData.damage;
 
     public bool IsDead => isDead;
 
-    private Vector2 lastPlayerPos;
+    private Vector3 lastPlayerPos;
 
     [SerializeField] private GameObject particle;
     private RoomSpawnHandle actualRoom;
@@ -59,7 +59,7 @@ public class EnemyEntity : Entity, IHitSource
 
     protected override void Start()
     {
-        base.Start();
+        StartEnemy(null);
         /*switch (behaviour)
         {
             case EnemySO.Behaviour.Melee:
@@ -94,8 +94,8 @@ public class EnemyEntity : Entity, IHitSource
                 break;
         }
         StartCoroutine(AIFindTarget());
-        GetComponent<CircleCollider2D>().radius = this.radiusHitbox;
-        //healthBar.SetMaxHealth(maxHealth,this);
+        //GetComponent<CircleCollider2D>().radius = this.radiusHitbox;
+        healthBar.SetMaxHealth(maxHealth,this);
         this.EventOnHit += GotCanceled;
         this.OnDeath += StopAllCoroutines;
     }
@@ -104,23 +104,24 @@ public class EnemyEntity : Entity, IHitSource
     {
         if (!canMove)
         {
-            rb2D.velocity = Vector2.zero;
+            rb.velocity = Vector2.zero;
             return;
         }
         //Un vecteur direction
-        Vector2 direction = playerRB.position - this.rb2D.position;
+        Vector3 direction = playerRB.position - this.rb.position;
+        direction.y = 0;
         //Une velocité
-        Vector2 movement = direction.normalized * movementSpeed / 2;
+        Vector3 movement = direction.normalized * movementSpeed / 2;
 
 
-        this.rb2D.velocity = movement;
+        this.rb.velocity = movement;
 
-        if(isFlipped && rb2D.velocity.x > 0.01f)
+        if(isFlipped && rb.velocity.x > 0.01f)
         {
             Flip();
         }
 
-        if(!isFlipped && rb2D.velocity.x < -0.01f)
+        if(!isFlipped && rb.velocity.x < -0.01f)
         {
             Flip();
 
@@ -132,11 +133,11 @@ public class EnemyEntity : Entity, IHitSource
     private void UpdateMovementRunAwayFromPlayer()
     {
         //Un vecteur direction
-        Vector2 direction = this.rb2D.position - playerRB.position;
+        Vector3 direction = this.rb.position - playerRB.position;
         //Une velocité
-        Vector2 movement = direction.normalized * movementSpeed / 2;
+        Vector3 movement = direction.normalized * movementSpeed / 2;
 
-        this.rb2D.velocity = movement;
+        this.rb.velocity = movement;
 
     }
 
@@ -145,7 +146,7 @@ public class EnemyEntity : Entity, IHitSource
         return this.health;
     }
 
-    public override void OnHit(float _value, IHitSource source)
+    public override void OnHit(float _value, IHitSource3D source)
     {
 
         StartCoroutine(WaitForMoving(0.2f));
@@ -156,7 +157,7 @@ public class EnemyEntity : Entity, IHitSource
 
     public override void Die()
     {
-        actualRoom.SubstractEnemy();
+        //actualRoom.SubstractEnemy();
         base.Die();
     }
 
@@ -170,8 +171,8 @@ public class EnemyEntity : Entity, IHitSource
 
     private void OnDrawGizmosSelected()
     {
-        if(rb2D != null)
-            Gizmos.DrawWireSphere(this.rb2D.position, enemyData.rangeRadius);
+        if(rb != null)
+            Gizmos.DrawSphere((lastPlayerPos - this.rb.position) + this.rb.position, enemyData.rangeRadius / 2);
     }
 
     public void Flip()
@@ -190,15 +191,23 @@ public class EnemyEntity : Entity, IHitSource
         player = null;
         playerRB = null;
 
-        Collider2D playerInRange;
+        Collider[] playerInRange;
         switch (behaviour)
         {
             case EnemySO.Behaviour.Melee:
-                playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius * 3, playerLayer);
+                playerInRange = Physics.OverlapSphere(this.rb.position, enemyData.rangeRadius * 3, playerLayer);
                 if (playerInRange != null)
                 {
-                    player = playerInRange.GetComponent<MainCharacterScript>();
-                    playerRB = playerInRange.attachedRigidbody;
+                    foreach (var p in playerInRange)
+                    {
+                        if (p.TryGetComponent<MainCharacterScript3D>(out MainCharacterScript3D _player))
+                        {
+                            player = _player;
+                            playerRB = p.attachedRigidbody;
+                        }
+                        
+                    }
+                    
                 }
                 //cours vers le joueur;
                 break;
@@ -217,11 +226,18 @@ public class EnemyEntity : Entity, IHitSource
         //tant que joueur pas trouvé
         while (player == null)
         {
-            playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius * 4, playerLayer);
+            playerInRange = Physics.OverlapSphere(this.rb.position, enemyData.rangeRadius * 4, playerLayer);
             if (playerInRange != null)
             {
-                player = playerInRange.GetComponent<MainCharacterScript>();
-                playerRB = playerInRange.attachedRigidbody;
+                foreach (var p in playerInRange)
+                {
+                    if (p.TryGetComponent<MainCharacterScript3D>(out MainCharacterScript3D _player))
+                    {
+                        player = _player;
+                        playerRB = p.attachedRigidbody;
+                    }
+
+                }
             }
             yield return new WaitForSeconds(0.1f);
         }
@@ -249,12 +265,18 @@ public class EnemyEntity : Entity, IHitSource
         while (!inAttackRange)
         {
             updateMovement();
-            Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius, playerLayer);
+            Collider[] playerInRange = Physics.OverlapSphere(this.rb.position, enemyData.rangeRadius, playerLayer);
             if (playerInRange != null)
             {
-                inAttackRange = true;
-            }
+                foreach (var p in playerInRange)
+                {
+                    if (p.TryGetComponent<MainCharacterScript3D>(out MainCharacterScript3D _player))
+                    {
+                        inAttackRange = true;
+                    }
 
+                }
+            }
 
             yield return new WaitForFixedUpdate();
         }
@@ -271,10 +293,17 @@ public class EnemyEntity : Entity, IHitSource
         while (!inAttackRange)
         {
             UpdateMovementTowardPlayer();
-            Collider2D playerInRange = Physics2D.OverlapCircle(this.rb2D.position, range, playerLayer);
+            Collider[] playerInRange = Physics.OverlapSphere(this.rb.position, range, playerLayer);
             if (playerInRange != null)
             {
-                inAttackRange = true;
+                foreach (var p in playerInRange)
+                {
+                    if (p.TryGetComponent<MainCharacterScript3D>(out MainCharacterScript3D _player))
+                    {
+                        inAttackRange = true;
+                    }
+
+                }
             }
 
             yield return new WaitForFixedUpdate();
@@ -284,7 +313,7 @@ public class EnemyEntity : Entity, IHitSource
         yield break;
     }
 
-    IEnumerator AIRunAwayFromPlayer()
+    /*IEnumerator AIRunAwayFromPlayer()
     {
         while (inAttackRange)
         {
@@ -301,13 +330,12 @@ public class EnemyEntity : Entity, IHitSource
         lastPlayerPos = playerRB.position;
         StartCoroutine(AIAttack());
         yield break;
-    }
+    }*/
 
-    //TelegraphTime est le temps d'animation possible avant que l'ennemi attaque. Le temps de voir le coup en gros. Après la petite animation de préparation, le coup sera porté.
     IEnumerator AIAttack()
     {
         animator.SetBool("IsMoving", false);
-        this.rb2D.velocity = this.rb2D.velocity / 2;
+        this.rb.velocity = this.rb.velocity / 1.5f;
         this.animator.SetTrigger("Attack");
         yield return null;
         yield return StartCoroutine(WaitForAttack());
@@ -319,9 +347,11 @@ public class EnemyEntity : Entity, IHitSource
     #endregion
     public void StartMeleeAttack()
     {
-        this.rb2D.AddForce((lastPlayerPos - this.rb2D.position).normalized * 3,ForceMode2D.Impulse);
+        var dir = (lastPlayerPos - this.rb.position);
+        dir.y = 0;
+        this.rb.AddForce(dir.normalized * 5,ForceMode.Impulse);
         StartCoroutine(ActiveFrameAttack());
-        particle.transform.position = (lastPlayerPos - this.rb2D.position ) + this.rb2D.position;
+        particle.transform.position = (lastPlayerPos - this.rb.position ) + this.rb.position;
         particle.GetComponent<ParticleSystem>().Play();
     }
     IEnumerator ActiveFrameAttack()
@@ -332,12 +362,21 @@ public class EnemyEntity : Entity, IHitSource
         {
             if (!playerHitOnce)
             {
-                Collider2D playerInRange = Physics2D.OverlapCircle((lastPlayerPos - this.rb2D.position) + this.rb2D.position, enemyData.rangeRadius / 2, playerLayer);
+                Collider[] playerInRange = Physics.OverlapSphere((lastPlayerPos - this.rb.position) + this.rb.position, enemyData.rangeRadius / 2, playerLayer);
                 if (playerInRange != null)
                 {
-                    player.OnHit(-damage, this);
-                    playerHitOnce = true;
+                    foreach (var p in playerInRange)
+                    {
+                        if (p.TryGetComponent<MainCharacterScript3D>(out MainCharacterScript3D _player))
+                        {
+                            _player.OnHit(-damage, this);
+                            playerHitOnce = true;
+                        }
+
+                    }
+                    
                 }
+
             }
             yield return new WaitForSeconds(0.15f);
 
@@ -350,8 +389,10 @@ public class EnemyEntity : Entity, IHitSource
     public void StartRangedAttack()
     {
         //instancier un projectile dans la direction du player.
-        GameObject projectile = Instantiate(enemyData.projectile, this.rb2D.position, Quaternion.identity);
-        projectile.GetComponent<ProjectileScript>().SetProjectile((playerRB.position - this.rb2D.position).normalized, 12f,damage);
+        GameObject projectile = Instantiate(enemyData.projectile, this.rb.position + Vector3.up * 0.5f, Quaternion.identity);
+        var dir = (playerRB.position - this.rb.position);
+        dir.y = 0;
+        projectile.GetComponent<ProjectileScript>().SetProjectile(dir.normalized, 12f,damage);
     }
 
 

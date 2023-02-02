@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
+public class ProjectileScript : MonoBehaviour,IHitSource3D, IHittable3D
 {
-    private Rigidbody2D rb2D;
+    private Rigidbody rb;
     [SerializeField] float projectileDamage;
-    private Vector2 direction;
+    private Vector3 direction;
     private float speed;
-    public Rigidbody2D SourceRigidbody2D => rb2D;
+    public Rigidbody SourceRigidbody => rb;
 
     public float Damage => projectileDamage;
     private bool gotHit = false;
@@ -21,23 +21,24 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
 
     private void Start()
     {
-        rb2D = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
 
-        rb2D.velocity = direction * speed;
+        rb.velocity = direction * speed;
+
         coroutine = StartCoroutine(Lifespan(3f));
         
     }
 
-    void IHittable.OnHit(float _value, IHitSource source)
+    void IHittable3D.OnHit(float _value, IHitSource3D source)
     {
-        Vector2 newDir = -direction;
-        rb2D.velocity = newDir * speed * 1.2f;
+        Vector3 newDir = -direction;
+        rb.velocity = newDir * speed * 1.2f;
         StopCoroutine(coroutine);
         StartCoroutine(Lifespan(2f));
         gotHit = true;
     }
 
-    public void SetProjectile(Vector2 direction, float speed, float damage, Entity sender = null)
+    public void SetProjectile(Vector3 direction, float speed, float damage, Entity sender = null)
     {
         this.direction = direction;
         this.speed = speed;
@@ -48,23 +49,23 @@ public class ProjectileScript : MonoBehaviour,IHitSource, IHittable
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter(Collider collision)
     {
-        if(collision.TryGetComponent<MainCharacterScript>(out MainCharacterScript hitObject))
+        if(collision.TryGetComponent<MainCharacterScript3D>(out MainCharacterScript3D hitObject))
         {
             hitObject.OnHit(-Damage, this);
             Destroy(this.gameObject);
         }
         if (gotHit)
         {
-            if (collision.TryGetComponent<EnemyEntity>(out EnemyEntity enemy))
+            if (collision.TryGetComponent<EnemyEntity3D>(out EnemyEntity3D enemy))
             {
                 if (isFromPlayer)
                 {
-                    Collider2D[] hitObjects = Physics2D.OverlapCircleAll(rb2D.position, 2f, layer);
+                    Collider[] hitObjects = Physics.OverlapSphere(rb.position, 2f, layer);
                     foreach (var hit in hitObjects)
                     {
-                        hit.GetComponent<IHittable>().OnHit(-Damage / 2, this);
+                        hit.GetComponent<IHittable3D>().OnHit(-Damage / 2, this);
                     }
                 }
                 else

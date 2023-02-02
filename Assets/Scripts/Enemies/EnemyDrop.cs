@@ -9,10 +9,10 @@ public class EnemyDrop : MonoBehaviour
 
     [Range(0,100)] [SerializeField] float dropChance = 40;
     private ItemsSO itemPicked = null;
-    private EnemyEntity enemy;
+    private EnemyEntity3D enemy;
     private void Awake()
     {
-        enemy = GetComponent<EnemyEntity>();
+        enemy = GetComponent<EnemyEntity3D>();
         enemy.OnDeath += PickItem;
     }
 

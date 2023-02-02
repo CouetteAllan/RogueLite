@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class MainCharacterScript3D : Entity3D
 {
+    public static Action<float> playerChangeHealth;
+
     [SerializeField] private AnimationCurve accelerationCurve;
     [SerializeField] private AnimationCurve decelerationCurve;
     private float timeCurve = 0f;
@@ -38,8 +41,6 @@ public class MainCharacterScript3D : Entity3D
     public bool CanMove { get => canMove; set => canMove = value; }
 
     private Coroutine invincibleCoroutine;
-    public delegate void PlayerChangeHealth(float value);
-    public PlayerChangeHealth OnPlayerChangeHealth;
 
     private void OnDisable()
     {
@@ -73,8 +74,8 @@ public class MainCharacterScript3D : Entity3D
         }
         trail.emitting = false;
         health = maxHealth;
-        //UIManager.Instance.SetMaxHealth(maxHealth,this);
-        //UIManager.Instance.SetUIHealth(maxHealth);
+        UIManager.Instance.SetMaxHealth(maxHealth,this);
+        UIManager.Instance.SetUIHealth(maxHealth);
         animator = GetComponent<Animator>();
     }
 
@@ -122,7 +123,7 @@ public class MainCharacterScript3D : Entity3D
         if (isDashing)
             return;
 
-        Vector3 targetMovement = new Vector3(input.x, 0, input.y).normalized;
+        Vector3 targetMovement = new Vector3(input.x, 0, input.y);
 
         AnimationCurve speedcurve = isMoving ? accelerationCurve : decelerationCurve;
 
@@ -153,7 +154,7 @@ public class MainCharacterScript3D : Entity3D
         if (invincibleCoroutine != null)
             StopCoroutine(invincibleCoroutine);
         invincibleCoroutine = StartCoroutine(DashInvincibilityHandle(dashInvincibleTime));
-        //un delay de 6frames (je devrai peut-être adapter en seconde)
+        //un delay de 6frames environ
         yield return new WaitForSeconds(0.07f);
 
 
@@ -193,13 +194,6 @@ public class MainCharacterScript3D : Entity3D
         this.damage = weaponPickedUpData.damage;
     }
 
-    /*private void OnMouseChangePos(InputAction.CallbackContext context)
-    {
-        mouseAim = context.action.ReadValue<Vector2>();
-        Vector2 realMousePos = Camera.main.ScreenToWorldPoint(new Vector3(mouseAim.x,mouseAim.y,Camera.main.nearClipPlane));
-        Vector2 dir = realMousePos - rb.position;
-        playerAttackScript.MouseAimDir = dir;
-    }*/
 
     public Animator GetAnimator()
     {
@@ -212,7 +206,7 @@ public class MainCharacterScript3D : Entity3D
     }
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter(Collider collision)
     {
 
         IPickable3D pickable = collision.GetComponent<IPickable3D>();
@@ -238,7 +232,7 @@ public class MainCharacterScript3D : Entity3D
     public override void ChangeHealth(float _value, IHitSource3D source = null)
     {
         base.ChangeHealth(_value, source);
-        OnPlayerChangeHealth(health + _value);
+        playerChangeHealth(health + _value);
     }
     public override void Die()
     {
