@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1def92fe6c6b99945a7f36a22bf7c24c, type: 3}
-  m_Name: DamageBonus
+  m_Script: {fileID: 11500000, guid: 6848eb3de1294174db1a1b82d60ea333, type: 3}
+  m_Name: BonusHealth
   m_EditorClassIdentifier: 
-  description: "Vous octroie 5 points de d\xE9g\xE2ts suppl\xE9mentaire"
-  name: "D\xE9g\xE2ts Bonus"
-  bonusEffect: 0
-  amount: 5
+  sprite: {fileID: 0}
+  animator: {fileID: 0}
+  sound: {fileID: 0}
+  bonusEffectData: {fileID: 0}

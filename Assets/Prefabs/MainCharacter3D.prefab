@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 509066507}
   - component: {fileID: 8955158973526170109}
   - component: {fileID: 538507526268917133}
+  - component: {fileID: 5794144602878211607}
   m_Layer: 6
   m_Name: MainCharacter3D
   m_TagString: Player
@@ -250,8 +251,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0.097802736
+      time: -0.00074905157
+      value: 0.4467658
       inSlope: 0.13606025
       outSlope: 0.13606025
       tangentMode: 0
@@ -259,8 +260,8 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0.1110556
     - serializedVersion: 3
-      time: 0.19244546
-      value: 0.36095515
+      time: 0.1916964
+      value: 0.70991826
       inSlope: 1.1329559
       outSlope: 1.1329559
       tangentMode: 0
@@ -322,6 +323,7 @@ MonoBehaviour:
   isFlipped: 0
   startWithWeapon: 1
   weapon: {fileID: 11400000, guid: 1d01d9f5517283747a0e84c2461fa009, type: 2}
+  currentPlayerStats: {fileID: 0}
 --- !u!95 &1835471835
 Animator:
   serializedVersion: 4
@@ -408,6 +410,30 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.45999998, y: 0.66790557, z: 0.15}
   m_Center: {x: 0.030000001, y: 0.066046774, z: 0}
+--- !u!114 &5794144602878211607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3752699502455542839}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f275c9895baebe4e8b9f9c0fa486894, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  critChance:
+    baseValue: 0
+  critMultiplier:
+    baseValue: 2
+  Damage:
+    baseValue: 2
+  movementSpeed:
+    baseValue: 8
+  maxHealth:
+    baseValue: 70
+  attackSpeed:
+    baseValue: 1
 --- !u!1 &3752699502704651480
 GameObject:
   m_ObjectHideFlags: 0

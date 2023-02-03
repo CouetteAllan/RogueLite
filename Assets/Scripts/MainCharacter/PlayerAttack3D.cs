@@ -38,7 +38,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 
 
     public Rigidbody SourceRigidbody => this.rb;
-    public float Damage => actualWeapon.damage;
+    public float Damage => player.GetPlayerStats().GetStat(StatType.Damage).Value;
 
     public bool IsDead => false;
 
@@ -231,7 +231,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
                 foreach (var enemy in enemiesHit)
                 {
                     IHittable3D hitObject = enemy.GetComponent<IHittable3D>();
-                    hitObject.OnHit(-actualWeapon.damage, this);
+                    hitObject.OnHit(-player.GetPlayerStats().GetStat(StatType.Damage).Value, this);
                     if (!hitObject.GotHit)
                     {
                         enemiesThatBeenHit.Add(hitObject);

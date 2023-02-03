@@ -17,14 +17,19 @@ public class UIManager : Singleton<UIManager>
     private Coroutine txtCoroutine;
 
     private MainCharacterScript3D player = null;
-    public void SetMaxHealth(float health, MainCharacterScript3D player)
+    public void SetMaxHealth(float health, MainCharacterScript3D player = null)
     {
         h_Slider.maxValue = health;
         playerMaxHealth = health;
-        playerHealth = health;
-        h_Fill.color = h_Gradient.Evaluate(1);
-        this.player = player;
-        MainCharacterScript3D.playerChangeHealth += SetUIHealth;
+
+
+        if (player != null)
+        {
+            playerHealth = health;
+            h_Fill.color = h_Gradient.Evaluate(1);
+            this.player = player;
+            MainCharacterScript3D.playerChangeHealth += SetUIHealth;
+        }
 
     }
 

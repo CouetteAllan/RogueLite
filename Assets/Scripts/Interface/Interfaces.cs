@@ -47,3 +47,8 @@ public interface IExit
 {
     void OnExit(MainCharacterScript player);
 }
+
+public interface IHealable
+{
+    void OnHeal(float heal);
+}

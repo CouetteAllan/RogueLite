@@ -7,6 +7,7 @@ public class ItemsScript : MonoBehaviour,IPickable3D
     [SerializeField] private ItemsSO itemData;
     [SerializeField] private GameObject graph;
     private Animator animator;
+    private bool pickedUp = false;
 
     public void InitItem(ItemsSO datas)
     {
@@ -21,8 +22,13 @@ public class ItemsScript : MonoBehaviour,IPickable3D
 
     public void OnPick(MainCharacterScript3D entity)
     {
-        itemData.DoEffect(entity);
-        StartCoroutine(PickAnim());
+        if (!pickedUp)
+        {
+            itemData.DoEffect(entity);
+            StartCoroutine(PickAnim());
+            pickedUp = true;
+        }
+        
     }
 
     IEnumerator PickAnim()

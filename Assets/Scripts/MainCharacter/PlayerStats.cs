@@ -2,117 +2,83 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using CharacterStats;
 
 public enum StatType
 {
-    CriticalChance,
-    CriticalMultiplier,
+    CritChance,
+    CritMultiplier,
     Damage,
-    MaxHealth,
     MovementSpeed,
+    MaxHealth,
     AttackSpeed
 }
 
-
-public class PlayerStats
+[Serializable]
+public class PlayerStats : MonoBehaviour
 {
-    private Dictionary<StatType, float> playerStats;
-    float critChance = 0f;
-    float critMultiplier = 2f;
-    float movementSpeedBonus = 0f;
-    float actualMaxHealth = 0f;
-    float bonusDamage = 0f;
-    float bonusAttckSpeed = 0f;
+    [SerializeField]
+    private PlayerSingleStat critChance;
+    [SerializeField]
+    private PlayerSingleStat critMultiplier;
+    [SerializeField]
+    private PlayerSingleStat Damage;
+    [SerializeField]
+    private PlayerSingleStat movementSpeed ;
+    [SerializeField]
+    private PlayerSingleStat maxHealth;
+    [SerializeField]
+    private PlayerSingleStat attackSpeed;
+
+    [SerializeField]
+    private Dictionary<StatType, PlayerSingleStat> stats = new Dictionary<StatType, PlayerSingleStat>();
 
     private MainCharacterScript3D player;
 
-    public event Action OnStatChanged;
+    public event Action OnMaxHealthChange;
 
-    public PlayerStats(MainCharacterScript3D _player)
+    private void Awake()
     {
-        playerStats = new Dictionary<StatType, float>();
-        this.player = _player;
-        actualMaxHealth = _player.GetEntityMaxHealth();
-    }
+        InitplayerStats();
+        player = GetComponent<MainCharacterScript3D>();
 
+    }
     private void InitplayerStats()
     {
-
+        AddNewStat(StatType.CritChance, critChance);
+        AddNewStat(StatType.CritMultiplier, critMultiplier);
+        AddNewStat(StatType.Damage, Damage);
+        AddNewStat(StatType.MovementSpeed, movementSpeed);
+        AddNewStat(StatType.MaxHealth, maxHealth);
+        AddNewStat(StatType.AttackSpeed, attackSpeed);
     }
 
-    public float GetStatValue(StatType type)
+    public void AddNewStat(StatType type, PlayerSingleStat stat)
     {
-        if (playerStats.TryGetValue(type, out float value))
-            return value;
-        else
+        stats.Add(type, stat);
+    }
+
+    public PlayerSingleStat GetStat(StatType type)
+    {
+        return stats[type]; 
+    }
+
+    public void AddModifier(StatModifier mod, StatType type)
+    {
+        GetStat(type).AddModifier(mod);
+        if(type == StatType.MaxHealth)
         {
-            Debug.LogError("$No value found of type ");
-            return 0;
+            OnMaxHealthChange?.Invoke();
         }
-            
     }
 
-    public void SetAttckSpeed(float _attackSpeed)
+    public void RemoveModifier(StatModifier mod, StatType type)
     {
-        bonusAttckSpeed += _attackSpeed;
-        OnStatChanged?.Invoke();
+        GetStat(type).RemoveModifier(mod);
     }
 
-    public void SetDamage(float _damage)
+    public void RemoveAllModifiersFromSource(object source, StatType type)
     {
-        bonusDamage += _damage;
-        OnStatChanged?.Invoke();
-
-    }
-    public void SetBonusHealth(float _health)
-    {
-        actualMaxHealth += _health;
-        player.SetEntityMaxHealth(actualMaxHealth);
-        OnStatChanged?.Invoke();
-
-    }
-    public void SetSpeed(float _speed)
-    {
-        movementSpeedBonus += _speed;
-        OnStatChanged?.Invoke();
-
-    }
-    public void SetCritMultiplier(float _critMult)
-    {
-        critMultiplier += _critMult;
-        OnStatChanged?.Invoke();
-
-    }
-    public void SetCritChance(float _critChance)
-    {
-        critChance += _critChance;
-        OnStatChanged?.Invoke();
-
-    }
-
-    public float GetAttckSpeed()
-    {
-        return bonusAttckSpeed;
-    }
-
-    public float GetDamage()
-    {
-        return bonusDamage;
-    }
-    public float GetBonusHealth()
-    {
-        return actualMaxHealth;
-    }
-    public float GetSpeed()
-    {
-        return movementSpeedBonus;
-    }
-    public float GetCritMultiplier()
-    {
-        return critMultiplier;
-    }
-    public float GetCritChance()
-    {
-        return critChance;
+        GetStat(type).RemoveAllModifiersFromSource(source);
     }
 }

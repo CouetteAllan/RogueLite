@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
+using CharacterStats;
 
-public class MainCharacterScript3D : Entity3D
+
+public class MainCharacterScript3D : Entity3D,IHealable
 {
     public static Action<float> playerChangeHealth;
 
@@ -42,13 +44,10 @@ public class MainCharacterScript3D : Entity3D
 
     private Coroutine invincibleCoroutine;
 
+    [SerializeField]
     private PlayerStats currentPlayerStats;
 
-    private float critChance = 0;
-    private float critMultiplier = 0;
-    private float movementSpeedBonus = 0;
-    private float baseDamage = 0;
-    private float attackSpeedBonus = 0;
+    
 
     private void OnDisable()
     {
@@ -64,9 +63,9 @@ public class MainCharacterScript3D : Entity3D
         InputManager.playerInputAction.Player.Dash.performed += Dash;
         InputManager.playerInputAction.Player.Move.canceled += Move_canceled;
         InputManager.playerInputAction.Player.Move.started += Move_started;
-
-        currentPlayerStats = new PlayerStats(this);
-
+        currentPlayerStats = GetComponent<PlayerStats>();
+        Debug.Log("current damage: " + damage);
+        currentPlayerStats.OnMaxHealthChange += OnMaxHealthChange;
         
     }
 
@@ -81,8 +80,10 @@ public class MainCharacterScript3D : Entity3D
         {
             PickUpWeapon(weapon);
             playerAttackScript.SetAttackSpeed(weaponPickedUpData.attackRate);
+            Debug.Log(currentPlayerStats.GetStat(StatType.Damage).Value);
         }
         trail.emitting = false;
+        maxHealth = currentPlayerStats.GetStat(StatType.MaxHealth).Value;
         health = maxHealth;
         UIManager.Instance.SetMaxHealth(maxHealth,this);
         UIManager.Instance.SetUIHealth(maxHealth);
@@ -137,7 +138,7 @@ public class MainCharacterScript3D : Entity3D
 
         AnimationCurve speedcurve = isMoving ? accelerationCurve : decelerationCurve;
 
-        rb.velocity = new Vector3(targetMovement.x * (movementSpeed * speedcurve.Evaluate(timeCurve)), rb.velocity.y, targetMovement.z * (movementSpeed * speedcurve.Evaluate(timeCurve)));
+        rb.velocity = new Vector3(targetMovement.x * (currentPlayerStats.GetStat(StatType.MovementSpeed).Value * speedcurve.Evaluate(timeCurve)), rb.velocity.y, targetMovement.z * (currentPlayerStats.GetStat(StatType.MovementSpeed).Value * speedcurve.Evaluate(timeCurve)));
     }
 
     private void Move_canceled(InputAction.CallbackContext context)
@@ -159,6 +160,17 @@ public class MainCharacterScript3D : Entity3D
 
     }
 
+    private void OnMaxHealthChange()
+    {
+        UIManager.Instance.SetMaxHealth(currentPlayerStats.GetStat(StatType.MaxHealth).Value);
+        health += currentPlayerStats.GetStat(StatType.MaxHealth).Value - currentPlayerStats.GetStat(StatType.MaxHealth).baseValue;
+    }
+
+    public void OnHeal(float heal)
+    {
+        this.ChangeHealth(heal);
+    }
+
     IEnumerator DashCoroutine()
     {
         if (invincibleCoroutine != null)
@@ -171,7 +183,7 @@ public class MainCharacterScript3D : Entity3D
         isDashing = true;
         //Va rapidement dans une direction
         this.rb.velocity = Vector3.zero;
-        this.rb.AddForce(new Vector3(lastInput.x, 0, lastInput.y) * dashForce, ForceMode.Impulse);
+        this.rb.AddForce(new Vector3(lastInput.x, 0, lastInput.y) * (dashForce + (currentPlayerStats.GetStat(StatType.MovementSpeed).Value/15) ), ForceMode.Impulse);
         trail.emitting = true;
 
 
@@ -200,8 +212,9 @@ public class MainCharacterScript3D : Entity3D
     public void PickUpWeapon(Weapons weapon)
     {
         weaponPickedUpData = weapon;
+        weaponPickedUpData.bonusDamage = new StatModifier(weaponPickedUpData.damage, ModType.Flat, weapon);
+        currentPlayerStats.AddModifier(weaponPickedUpData.bonusDamage, StatType.Damage);
         playerAttackScript.SetActualWeapon(weaponPickedUpData);
-        this.damage = weaponPickedUpData.damage;
     }
 
 
@@ -223,6 +236,8 @@ public class MainCharacterScript3D : Entity3D
         if (pickable != null)
         {
             pickable.OnPick(this);
+            Debug.Log(currentPlayerStats.GetStat(StatType.Damage).Value);
+
         }
 
         /*if(collision.TryGetComponent<IExit>(out IExit exit))
@@ -308,7 +323,7 @@ public class MainCharacterScript3D : Entity3D
 
     private void UpdateStats()
     {
-        damage = baseDamage + currentPlayerStats.GetDamage();
+
     }
 
 }

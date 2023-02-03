@@ -1,38 +1,61 @@
 using UnityEngine;
-
+using CharacterStats;
 
 [CreateAssetMenu(fileName = "New Bonus", menuName = "Items/Bonus/Object")]
 public class StatsBonusSO : ItemsSO
 {
-    public BonusEffectSO bonusEffectData;
+    public string description = "Insert Bonus description to display";
+    public new string name = "Bonus Name";
+
+    public enum BonusEffect
+    {
+        DamageBonus,
+        AttackSpeedBonus,
+        HealthBonus,
+        CritMultiplierBonus,
+        CritChanceBonus,
+        MovementSpeedBonus,
+    }
+
+    public BonusEffect bonusEffect;
+
+    public ModType type;
+
+    public float amount;
     public override void DoEffect(MainCharacterScript3D player)
     {
-        switch (bonusEffectData.bonusEffect)
+        switch (bonusEffect)
         {
-            case BonusEffectSO.BonusEffect.DamageBonus:
+            case BonusEffect.DamageBonus:
                 //Jouer un event ?
-                player.GetPlayerStats().SetDamage(bonusEffectData.amount);
+                player.GetPlayerStats().AddModifier(new StatModifier(amount, type, this), StatType.Damage);
                 Debug.Log("Bonus Damage !");
                 break;
 
-            case BonusEffectSO.BonusEffect.AttackSpeedBonus:
-                player.GetPlayerStats().SetAttckSpeed(bonusEffectData.amount);
+            case BonusEffect.AttackSpeedBonus:
+                player.GetPlayerStats().AddModifier(new StatModifier(amount, type, this), StatType.AttackSpeed);
+
                 break;
 
-            case BonusEffectSO.BonusEffect.HealthBonus:
-                player.GetPlayerStats().SetBonusHealth(bonusEffectData.amount);
+            case BonusEffect.HealthBonus:
+                player.ChangeHealth(amount);
+                player.GetPlayerStats().AddModifier(new StatModifier(amount, type, this), StatType.MaxHealth);
+
                 break;
 
-            case BonusEffectSO.BonusEffect.CritMultiplierBonus:
-                player.GetPlayerStats().SetCritMultiplier(bonusEffectData.amount);
+            case BonusEffect.CritMultiplierBonus:
+                player.GetPlayerStats().AddModifier(new StatModifier(amount, type, this), StatType.CritMultiplier);
+
                 break;
 
-            case BonusEffectSO.BonusEffect.CritChanceBonus:
-                player.GetPlayerStats().SetCritChance(bonusEffectData.amount);
+            case BonusEffect.CritChanceBonus:
+                player.GetPlayerStats().AddModifier(new StatModifier(amount, type, this), StatType.CritChance);
+
                 break;
 
-            case BonusEffectSO.BonusEffect.MovementSpeedBonus:
-                player.GetPlayerStats().SetSpeed(bonusEffectData.amount);
+            case BonusEffect.MovementSpeedBonus:
+                player.GetPlayerStats().AddModifier(new StatModifier(amount, type, this), StatType.MovementSpeed);
+
                 break;
         }
     }
