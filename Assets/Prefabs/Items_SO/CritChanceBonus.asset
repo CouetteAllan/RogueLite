@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6848eb3de1294174db1a1b82d60ea333, type: 3}
-  m_Name: BonusHealth
+  m_Name: CritChanceBonus
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 02800fb9cff14da47a04572790384d8b, type: 3}
+  sprite: {fileID: 21300000, guid: 65f0e363b74cf5845ab8c3fbc14f39ac, type: 3}
   animator: {fileID: 0}
   sound: {fileID: 0}
-  description: Vous octroie 20 points de vie bonus
-  name: Bonus Health
-  bonusEffect: 2
-  type: 100
-  amount: 20
+  description: Augmente vos chances de coup critique
+  name: Crit Chance
+  bonusEffect: 4
+  type: 200
+  amount: 0.3

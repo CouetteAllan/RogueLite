@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 {
+    public event Action OnCritLanded;
+
     private bool isUsingGamePad;
     [SerializeField] GameObject hand;
 
@@ -216,6 +219,14 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         var mouseAimDir = mousePos - rb.position;
         mouseAimDir.y = 0;
 
+        float damageOutput = -player.GetPlayerStats().GetStat(StatType.Damage).Value;
+        bool critStrike = UnityEngine.Random.Range(0f, 1f) <= player.GetPlayerStats().GetStat(StatType.CritChance).Value;
+        if (critStrike)
+        {
+            Debug.Log("coup critique !");
+            damageOutput *= player.GetPlayerStats().GetStat(StatType.CritMultiplier).Value;
+        }
+
         Debug.Log(usingGamePad);
         while (isAttacking)
         {
@@ -231,7 +242,9 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
                 foreach (var enemy in enemiesHit)
                 {
                     IHittable3D hitObject = enemy.GetComponent<IHittable3D>();
-                    hitObject.OnHit(-player.GetPlayerStats().GetStat(StatType.Damage).Value, this);
+                    hitObject.OnHit(damageOutput, this);
+                    if (critStrike)
+                        OnCritLanded?.Invoke();
                     if (!hitObject.GotHit)
                     {
                         enemiesThatBeenHit.Add(hitObject);

@@ -15,4 +15,8 @@ MonoBehaviour:
   sprite: {fileID: 21300000, guid: a0e35f6b808bb7447826cc6c69ffe448, type: 3}
   animator: {fileID: 0}
   sound: {fileID: 0}
-  bonusEffectData: {fileID: 11400000, guid: 40ee66cd259200848a25b05cd9ff2d4a, type: 2}
+  description: "Vous octroie 10% de vitesse de d\xE9placement"
+  name: Bottes
+  bonusEffect: 5
+  type: 200
+  amount: 0.1
