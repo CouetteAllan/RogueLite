@@ -94,4 +94,14 @@ public class Entity3D : MonoBehaviour, IHittable3D
     {
         StopAllCoroutines();
     }
+
+    public float GetEntityMaxHealth()
+    {
+        return this.maxHealth;
+    }
+
+    public void SetEntityMaxHealth(float _maxHealth)
+    {
+        maxHealth = _maxHealth;
+    }
 }

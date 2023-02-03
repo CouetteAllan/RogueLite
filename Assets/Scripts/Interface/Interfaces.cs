@@ -19,12 +19,12 @@ public interface IHittable3D
 
 public interface IPickable
 {
-    void OnPick(Entity entity);
+    void OnPick(MainCharacterScript3D entity);
 }
 
 public interface IPickable3D
 {
-    void OnPick(Entity3D entity);
+    void OnPick(MainCharacterScript3D entity);
 }
 
 public interface IHitSource

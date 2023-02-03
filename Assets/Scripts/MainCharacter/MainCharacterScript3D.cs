@@ -42,6 +42,14 @@ public class MainCharacterScript3D : Entity3D
 
     private Coroutine invincibleCoroutine;
 
+    private PlayerStats currentPlayerStats;
+
+    private float critChance = 0;
+    private float critMultiplier = 0;
+    private float movementSpeedBonus = 0;
+    private float baseDamage = 0;
+    private float attackSpeedBonus = 0;
+
     private void OnDisable()
     {
         //playerInputAction.Player.MouseAim.performed -= OnMouseChangePos;
@@ -56,6 +64,8 @@ public class MainCharacterScript3D : Entity3D
         InputManager.playerInputAction.Player.Dash.performed += Dash;
         InputManager.playerInputAction.Player.Move.canceled += Move_canceled;
         InputManager.playerInputAction.Player.Move.started += Move_started;
+
+        currentPlayerStats = new PlayerStats(this);
 
         
     }
@@ -289,9 +299,16 @@ public class MainCharacterScript3D : Entity3D
         trail.emitting = false;
         isDashing = false;
         StartCoroutine(DashCooldownTimer(dashCooldown));
+    }
 
+    public PlayerStats GetPlayerStats()
+    {
+        return this.currentPlayerStats;
+    }
 
-
+    private void UpdateStats()
+    {
+        damage = baseDamage + currentPlayerStats.GetDamage();
     }
 
 }

@@ -2,21 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewItem", menuName = "Items")]
-public class ItemsSO : ScriptableObject
+public abstract class ItemsSO : ScriptableObject
 {
     public Sprite sprite;
     public RuntimeAnimatorController animator;
 
-    public enum Effect
+    /*public enum Effect
     {
         Heal,
-        DamageBonus,
-        Coin
+        Money,
+        Bonus
     }
-    public Effect effect;
-    public float bonusAmountEffect;
-    public AudioClip sound;
+    public Effect effect;*/
 
+    public AudioClip sound;
+    public abstract void DoEffect(MainCharacterScript3D player);
 
 }

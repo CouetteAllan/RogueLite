@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemsScript : MonoBehaviour,IPickable
+public class ItemsScript : MonoBehaviour,IPickable3D
 {
     [SerializeField] private ItemsSO itemData;
     [SerializeField] private GameObject graph;
@@ -15,27 +15,14 @@ public class ItemsScript : MonoBehaviour,IPickable
     private void Awake()
     {
         this.animator = graph.GetComponent<Animator>();
+        animator.runtimeAnimatorController = itemData.animator;
+        this.graph.GetComponent<SpriteRenderer>().sprite = itemData.sprite;
     }
 
-    public void OnPick(Entity entity)
+    public void OnPick(MainCharacterScript3D entity)
     {
-        switch (itemData.effect)
-        {
-            case ItemsSO.Effect.Heal:
-                //change health ++
-                entity.ChangeHealth(itemData.bonusAmountEffect);
-                break;
-            case ItemsSO.Effect.Coin:
-                //add moula
-                Debug.Log("plus d'argent let's goo");
-                break;
-            case ItemsSO.Effect.DamageBonus:
-                //add dégâts bonus
-                Debug.Log("Dégâts augmentés !");
-                break;
-        }
+        itemData.DoEffect(entity);
         StartCoroutine(PickAnim());
-
     }
 
     IEnumerator PickAnim()

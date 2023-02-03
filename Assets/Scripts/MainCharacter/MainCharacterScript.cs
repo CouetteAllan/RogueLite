@@ -199,7 +199,7 @@ public class MainCharacterScript : Entity
     }
 
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    /*private void OnTriggerEnter2D(Collider2D collision)
     {
 
         IPickable pickable = collision.GetComponent<IPickable>();
@@ -213,7 +213,7 @@ public class MainCharacterScript : Entity
             exit.OnExit(this);
         }
 
-    }
+    }*/
 
     public override void OnHit(float _value, IHitSource source)
     {
