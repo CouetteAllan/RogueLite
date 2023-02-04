@@ -45,7 +45,7 @@ public interface IHitSource3D
 
 public interface IExit
 {
-    void OnExit(MainCharacterScript player);
+    void OnExit(MainCharacterScript3D player);
 }
 
 public interface IHealable
@@ -56,4 +56,5 @@ public interface IHealable
 public interface IInteractable
 {
     void OnInteract(MainCharacterScript3D player);
+    Transform interactTransform { get; }
 }

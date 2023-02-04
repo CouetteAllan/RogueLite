@@ -36,6 +36,7 @@ public class PlayerStats : MonoBehaviour
     private MainCharacterScript3D player;
 
     public event Action OnMaxHealthChange;
+    public event Action<StatType> OnPlayerStatChange;
 
     private void Awake()
     {
@@ -66,7 +67,8 @@ public class PlayerStats : MonoBehaviour
     public void AddModifier(StatModifier mod, StatType type)
     {
         GetStat(type).AddModifier(mod);
-        if(type == StatType.MaxHealth)
+        OnPlayerStatChange(type);
+        if (type == StatType.MaxHealth)
         {
             OnMaxHealthChange?.Invoke();
         }

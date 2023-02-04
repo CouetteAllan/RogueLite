@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemsScript : MonoBehaviour,IPickable3D
+public class ItemsScript : MonoBehaviour,IPickable3D, IInteractable
 {
     [SerializeField] private ItemsSO itemData;
     [SerializeField] private GameObject graph;
     private Animator animator;
     private bool pickedUp = false;
+
+    public Transform interactTransform => this.transform;
 
     public void InitItem(ItemsSO datas)
     {
@@ -53,4 +55,15 @@ public class ItemsScript : MonoBehaviour,IPickable3D
     {
         StopAllCoroutines();
     }
+
+    public void OnInteract(MainCharacterScript3D player)
+    {
+        OnPick(player);
+    }
+
+    public StatsBonusSO GetItemData()
+    {
+        return this.itemData as StatsBonusSO;
+    }
+
 }

@@ -10,4 +10,9 @@ public class ChangeCameraScript : MonoBehaviour
         virtualCam.SetActive(false);
         _nextVirtualCamera.SetActive(true);
     }
+
+    public GameObject GetActualCameraRoom()
+    {
+        return virtualCam;
+    }
 }

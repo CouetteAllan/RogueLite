@@ -8,7 +8,10 @@ using CharacterStats;
 
 public class MainCharacterScript3D : Entity3D,IHealable
 {
-    public static Action<float> playerChangeHealth;
+
+    public static event Action<float> playerChangeHealth;
+
+    public static event Action<IInteractable> OnInteractSelectChange;
 
     [SerializeField] private AnimationCurve accelerationCurve;
     [SerializeField] private AnimationCurve decelerationCurve;
@@ -47,7 +50,8 @@ public class MainCharacterScript3D : Entity3D,IHealable
     [SerializeField]
     private PlayerStats currentPlayerStats;
 
-    
+    private IInteractable interactable;
+    public IInteractable Interactable { get => interactable; }
 
     private void OnDisable()
     {
@@ -72,13 +76,11 @@ public class MainCharacterScript3D : Entity3D,IHealable
 
     private void Interact_performed(InputAction.CallbackContext obj)
     {
-        Collider[] interacts = Physics.OverlapSphere(this.rb.position, 2f);
-        foreach (var i in interacts)
+        IInteractable interact = GetInteractableObject();
+        if (interact != null)
         {
-            if(i.TryGetComponent<IInteractable>(out IInteractable interactable))
-            {
-                interactable.OnInteract(this);
-            }
+            interact.OnInteract(this);
+            
         }
     }
 
@@ -134,6 +136,21 @@ public class MainCharacterScript3D : Entity3D,IHealable
         animator.SetFloat("ZSpeed", lastInput.y);
 
         timeCurve += Time.deltaTime;
+        HandleInteraction();
+
+    }
+
+    IEnumerator CustomUpdate()
+    {
+        while (true)
+        {
+            IInteractable interactObject = GetInteractableObject();
+            if(interactObject != null)
+            {
+
+            }
+            yield return new WaitForSeconds(0.12f);
+        }
 
     }
 
@@ -223,6 +240,37 @@ public class MainCharacterScript3D : Entity3D,IHealable
 
     }
 
+    public IInteractable GetInteractableObject()
+    {
+        List<IInteractable> interactableList = new List<IInteractable>();
+        float interactRange = 2f;
+        Collider[] interactArray = Physics.OverlapSphere(this.rb.position, interactRange);
+        foreach (var i in interactArray)
+        {
+            if(i.TryGetComponent<IInteractable>(out IInteractable interact)){
+                interactableList.Add(interact);
+            }
+        }
+        IInteractable nearestObject = null;
+
+        foreach (var i in interactableList)
+        {
+            if (nearestObject == null)
+                nearestObject = i;
+            else
+            {
+                if(Vector3.SqrMagnitude( i.interactTransform.position - rb.position) < Vector3.SqrMagnitude(nearestObject.interactTransform.position - rb.position))
+                {
+                    nearestObject = i;
+                }
+            }
+        }
+
+
+
+        return nearestObject;
+    }
+
     public void PickUpWeapon(Weapons weapon)
     {
         weaponPickedUpData = weapon;
@@ -242,22 +290,36 @@ public class MainCharacterScript3D : Entity3D,IHealable
         return rb;
     }
 
+    public void HandleInteraction()
+    {
+        IInteractable interactableObject = GetInteractableObject();
+        if (interactableObject != interactable )
+        {
+            interactable = interactableObject;
+            OnInteractSelectChange(interactable);
+        }
+        else if(interactableObject == null)
+        {
+            interactable = null;
+            OnInteractSelectChange(interactable);
+        }
+    }
+
 
     private void OnTriggerEnter(Collider collision)
     {
 
-        IPickable3D pickable = collision.GetComponent<IPickable3D>();
+        IInteractable pickable = collision.GetComponent<IInteractable>();
         if (pickable != null)
         {
-            pickable.OnPick(this);
-            Debug.Log(currentPlayerStats.GetStat(StatType.Damage).Value);
 
+            Debug.Log(pickable);
         }
 
-        /*if(collision.TryGetComponent<IExit>(out IExit exit))
+        if(collision.TryGetComponent<IExit>(out IExit exit))
         {
             exit.OnExit(this);
-        }*/
+        }
 
     }
 
