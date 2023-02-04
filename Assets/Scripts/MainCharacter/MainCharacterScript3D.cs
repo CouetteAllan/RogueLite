@@ -63,10 +63,23 @@ public class MainCharacterScript3D : Entity3D,IHealable
         InputManager.playerInputAction.Player.Dash.performed += Dash;
         InputManager.playerInputAction.Player.Move.canceled += Move_canceled;
         InputManager.playerInputAction.Player.Move.started += Move_started;
+        InputManager.playerInputAction.Player.Interact.performed += Interact_performed;
         currentPlayerStats = GetComponent<PlayerStats>();
         Debug.Log("current damage: " + damage);
         currentPlayerStats.OnMaxHealthChange += OnMaxHealthChange;
         
+    }
+
+    private void Interact_performed(InputAction.CallbackContext obj)
+    {
+        Collider[] interacts = Physics.OverlapSphere(this.rb.position, 2f);
+        foreach (var i in interacts)
+        {
+            if(i.TryGetComponent<IInteractable>(out IInteractable interactable))
+            {
+                interactable.OnInteract(this);
+            }
+        }
     }
 
 
@@ -168,8 +181,9 @@ public class MainCharacterScript3D : Entity3D,IHealable
 
     public void OnHeal(float heal)
     {
-        this.ChangeHealth(heal);
+        ChangeHealth(heal);
     }
+    
 
     IEnumerator DashCoroutine()
     {
@@ -256,7 +270,22 @@ public class MainCharacterScript3D : Entity3D,IHealable
 
     public override void ChangeHealth(float _value, IHitSource3D source = null)
     {
-        base.ChangeHealth(_value, source);
+        if (isDead)
+            return;
+        if (_value < 0)
+        {
+            animator.SetTrigger("Hurt");
+            if (source != null)
+            {
+                Vector2 pushDirection = this.rb.position - source.SourceRigidbody.position;
+                this.rb.AddForce(pushDirection.normalized * pushForce, ForceMode.Impulse);
+            }
+        }
+
+        health = Mathf.Clamp(health += _value, 0, currentPlayerStats.GetStat(StatType.MaxHealth).Value);
+
+        if (health <= 0)
+            this.Die();
         playerChangeHealth(health + _value);
     }
     public override void Die()
@@ -321,9 +350,5 @@ public class MainCharacterScript3D : Entity3D,IHealable
         return this.currentPlayerStats;
     }
 
-    private void UpdateStats()
-    {
-
-    }
 
 }

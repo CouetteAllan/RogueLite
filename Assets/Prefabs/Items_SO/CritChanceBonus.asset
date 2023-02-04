@@ -18,5 +18,5 @@ MonoBehaviour:
   description: Augmente vos chances de coup critique
   name: Crit Chance
   bonusEffect: 4
-  type: 200
-  amount: 0.3
+  type: 100
+  amount: 0.05

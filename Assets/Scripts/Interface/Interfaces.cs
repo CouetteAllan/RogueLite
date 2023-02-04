@@ -52,3 +52,8 @@ public interface IHealable
 {
     void OnHeal(float heal);
 }
+
+public interface IInteractable
+{
+    void OnInteract(MainCharacterScript3D player);
+}
