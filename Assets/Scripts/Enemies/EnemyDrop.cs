@@ -31,8 +31,6 @@ public class EnemyDrop : MonoBehaviour
             itemPicked = itemToDrop[Random.Range(0, itemToDrop.Length)];
             DropItem();
         }
-        else
-            Debug.Log("Pas de chance");
     }
 
     private void OnDestroy()

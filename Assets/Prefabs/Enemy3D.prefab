@@ -5048,10 +5048,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemToDrop:
-  - {fileID: 11400000, guid: 8f290897450c5bf4085f401c9e23abcd, type: 2}
-  - {fileID: 11400000, guid: 8f290897450c5bf4085f401c9e23abcd, type: 2}
+  - {fileID: 11400000, guid: 7bfb1dc2cbce9fc4e928349b8280d539, type: 2}
+  - {fileID: 11400000, guid: 74d0126f54262d242935df34194497df, type: 2}
+  - {fileID: 11400000, guid: 296c196d8946b0c4bac1fe57e0ccfc85, type: 2}
+  - {fileID: 11400000, guid: 2764e946ad365a749944d81fe7882fa4, type: 2}
   itemPrefab: {fileID: 6646794710163924282, guid: c09e2cb372d496d4185d034b0f386863, type: 3}
-  dropChance: 20
+  dropChance: 8
 --- !u!95 &3538155786439435157
 Animator:
   serializedVersion: 4

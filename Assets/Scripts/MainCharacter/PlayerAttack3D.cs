@@ -227,7 +227,6 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
             damageOutput *= player.GetPlayerStats().GetStat(StatType.CritMultiplier).Value;
         }
 
-        Debug.Log(usingGamePad);
         while (isAttacking)
         {
             if(usingGamePad)

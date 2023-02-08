@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectsThatCanSpawn:
-  - {fileID: 3947535518029480716, guid: dee7d09459baec244bfa66f43bf5f83a, type: 3}
+  - {fileID: 3947535518029480716, guid: 3655c2d0fefc5d34cb14d14775b01865, type: 3}
   - {fileID: 6646794710163924282, guid: c09e2cb372d496d4185d034b0f386863, type: 3}
   chanceToSpawn: 50
   enemy_SOs:

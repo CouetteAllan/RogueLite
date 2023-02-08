@@ -63,7 +63,7 @@ public class EnemyEntity3D : Entity3D, IHitSource3D
 
     protected override void Start()
     {
-        StartEnemy(null);
+        //StartEnemy(actualRoom);
         /*switch (behaviour)
         {
             case EnemySO.Behaviour.Melee:
@@ -161,7 +161,7 @@ public class EnemyEntity3D : Entity3D, IHitSource3D
 
     public override void Die()
     {
-        //actualRoom.SubstractEnemy();
+        actualRoom.SubstractEnemy();
         base.Die();
     }
 

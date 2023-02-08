@@ -296,12 +296,12 @@ public class MainCharacterScript3D : Entity3D,IHealable
         if (interactableObject != interactable )
         {
             interactable = interactableObject;
-            OnInteractSelectChange(interactable);
+            OnInteractSelectChange?.Invoke(interactable);
         }
         else if(interactableObject == null)
         {
             interactable = null;
-            OnInteractSelectChange(interactable);
+            OnInteractSelectChange?.Invoke(interactable);
         }
     }
 
@@ -313,7 +313,6 @@ public class MainCharacterScript3D : Entity3D,IHealable
         if (pickable != null)
         {
 
-            Debug.Log(pickable);
         }
 
         if(collision.TryGetComponent<IExit>(out IExit exit))

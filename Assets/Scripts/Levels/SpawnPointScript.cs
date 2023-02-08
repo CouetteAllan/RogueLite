@@ -17,7 +17,7 @@ public class SpawnPointScript : MonoBehaviour
         {
             StartCoroutine(DelaySpawn(2f));
         }
-        if(nbOfWaves <= 0)
+        if (nbOfWaves <= 0)
             Destroy(this.gameObject);
         nbOfWaves--;
     }
@@ -25,11 +25,12 @@ public class SpawnPointScript : MonoBehaviour
     private void Spawn()
     {
         GameObject instantiateGO = Instantiate(objectsThatCanSpawn[/*Random.Range(0, objectsThatCanSpawn.Length)*/0], this.transform.position, Quaternion.identity);
-        if (instantiateGO.TryGetComponent<EnemyEntity>(out EnemyEntity enemyEntity))
+        if (instantiateGO.TryGetComponent<EnemyEntity3D>(out EnemyEntity3D enemyEntity))
         {
             enemyEntity.enemyData = enemy_SOs[Random.Range(0, 2)];
             enemyEntity.StartEnemy(actualRoom);
         }
+        
     }
 
     private void OnDestroy()
