@@ -53,8 +53,11 @@ public class Entity3D : MonoBehaviour, IHittable3D
 
         health = Mathf.Clamp(health += _value, 0, maxHealth);
 
+        DamagePoolingScript.Instance.CreatePopUp(Mathf.RoundToInt(_value), this.rb.position + Vector3.up * 0.7f);
+
         if (health <= 0)
             this.Die();
+
     }
 
     public virtual void Die()

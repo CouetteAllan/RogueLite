@@ -157,6 +157,7 @@ public class EnemyEntity3D : Entity3D, IHitSource3D
         base.OnHit(_value, source);
         healthBar.SetHealth(health);
 
+
     }
 
     public override void Die()
