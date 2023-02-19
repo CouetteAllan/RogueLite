@@ -95,7 +95,6 @@ public class MainCharacterScript3D : Entity3D,IHealable
         {
             PickUpWeapon(weapon);
             playerAttackScript.SetAttackSpeed(weaponPickedUpData.attackRate);
-            Debug.Log(currentPlayerStats.GetStat(StatType.Damage).Value);
         }
         trail.emitting = false;
         maxHealth = currentPlayerStats.GetStat(StatType.MaxHealth).Value;

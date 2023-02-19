@@ -90,6 +90,7 @@ public class Entity3D : MonoBehaviour, IHittable3D
         if (isDead || isInvincible)
             return;
         ChangeHealth(_value,source);
+        Debug.Log("Ennemi touchey: " + _value + " "+ this.name);
         EventOnHit?.Invoke();
     }
 

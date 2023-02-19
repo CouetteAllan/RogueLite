@@ -156,7 +156,6 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         rb.AddForce(mouseAimDir.normalized * pushForceForward, ForceMode.Impulse);
         hitbox.SetActive(true);
         offset = rb.position + mouseAimDir.normalized;
-
         attackType();
     }
 
@@ -213,8 +212,13 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         hitbox.transform.localScale = new Vector3((actualWeapon.range / 20) * 1.7f, 0.5f, (actualWeapon.range / 20) * 1.7f);
     }
 
+    bool doOnce = false;
     IEnumerator ActiveFrameAttack(bool usingGamePad)
     {
+        if (doOnce)
+            yield break;
+        doOnce = true;
+
         var mousePos = GetMousePosInTheWorld();
         var mouseAimDir = mousePos - rb.position;
         mouseAimDir.y = 0;
@@ -223,7 +227,6 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         bool critStrike = UnityEngine.Random.Range(0f, 1f) <= player.GetPlayerStats().GetStat(StatType.CritChance).Value;
         if (critStrike)
         {
-            Debug.Log("coup critique !");
             damageOutput *= player.GetPlayerStats().GetStat(StatType.CritMultiplier).Value;
         }
 
@@ -241,19 +244,22 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
                 foreach (var enemy in enemiesHit)
                 {
                     IHittable3D hitObject = enemy.GetComponent<IHittable3D>();
-                    hitObject.OnHit(damageOutput, this);
-                    if (critStrike)
-                        OnCritLanded?.Invoke();
+
                     if (!hitObject.GotHit)
                     {
                         enemiesThatBeenHit.Add(hitObject);
+                        hitObject.OnHit(damageOutput, this);
                         hitObject.GotHit = true;
                     }
+
+                    if (critStrike)
+                        OnCritLanded?.Invoke();
+                    
 
                 }
             }
             
-            yield return new WaitForSeconds(0.015f);
+            yield return null;
         }
 
         yield break;
@@ -275,6 +281,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         hitbox.SetActive(false);
         isAttacking = false;
         player.CanMove = true;
+        doOnce = false;
     }
 
     public void SetActualWeapon(Weapons weapon)
