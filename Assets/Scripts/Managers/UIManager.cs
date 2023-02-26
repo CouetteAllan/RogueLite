@@ -3,18 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class UIManager : Singleton<UIManager>
 {
+    [Header("EventSystem Related")]
+    [SerializeField] private EventSystem eventSystem;
+    [Tooltip("Le premier game object selectionné dans l'UI à l'ouverture du panel Pause")]
+    [SerializeField] private GameObject firstGameObjectPauseMenu;
 
+    [Tooltip("Le premier game object selectionné dans l'UI à l'ouverture du panel Select")]
+    [SerializeField] private GameObject firstGameObjectSelectMenu;
+
+    [Space]
     [SerializeField] private Slider h_Slider;
     [SerializeField] private Gradient h_Gradient;
     [SerializeField] private Image h_Fill;
     [SerializeField] private TextMeshProUGUI h_Txt;
+
+    [Space]
+    [Header("Menus Canvas/Panel")]
+    [SerializeField] private Canvas menuCanvas;
+    [SerializeField] private GameObject selectParentGameObject;
+    [SerializeField] private GameObject pauseParentGameObject;
+
+
+
     private float playerHealth;
     private float playerMaxHealth;
     private Coroutine fillBarCoroutine;
     private Coroutine txtCoroutine;
+    private delegate void SetActivePanel(bool active);
+    private SetActivePanel activeMenu;
+
 
     private MainCharacterScript3D player = null;
     public void SetMaxHealth(float health, MainCharacterScript3D player = null)
@@ -75,5 +96,43 @@ public class UIManager : Singleton<UIManager>
         }
         playerHealth = target;
     }
+
+    public void Resume()
+    {
+        GameManager.Instance.ActualGameState = GameState.InGame;
+    }
+
+    ///<summary> Active le canvas de pause et séléctionne la panel à afficher selon le game state
+    ///</summary>
+    public void SetActiveMenu(bool active, GameState state)
+    {
+        menuCanvas.gameObject.SetActive(active);
+        SetMenu(state);
+        activeMenu(active);
+    }
+
+    //Séléctionne le menu Pause ou bien le menu Select selon l'état du jeu
+    private void SetMenu(GameState state)
+    {
+        if (state == GameState.Pause)
+            activeMenu = PauseMenuActive;
+        else if(state == GameState.InSelect)
+            activeMenu = SelectMenuActive;
+    }
+
+    private void PauseMenuActive(bool active) {
+        pauseParentGameObject.SetActive(active);
+        selectParentGameObject.SetActive(false);
+        eventSystem.firstSelectedGameObject = firstGameObjectPauseMenu;
+    }
+
+    private void SelectMenuActive(bool active)
+    {
+        selectParentGameObject.SetActive(active);
+        pauseParentGameObject.SetActive(false);
+        eventSystem.firstSelectedGameObject = firstGameObjectSelectMenu;
+
+    }
+
 
 }

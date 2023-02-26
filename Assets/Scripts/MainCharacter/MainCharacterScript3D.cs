@@ -59,6 +59,11 @@ public class MainCharacterScript3D : Entity3D,IHealable
         InputManager.playerInputAction.Player.Dash.performed -= Dash;
         InputManager.playerInputAction.Player.Move.canceled -= Move_canceled;
         InputManager.playerInputAction.Player.Move.started -= Move_started;
+        InputManager.playerInputAction.Player.Interact.performed -= Interact_performed;
+        InputManager.playerInputAction.Player.Pause.performed -= Pause_performed;
+
+
+
     }
 
     private void Awake()
@@ -68,10 +73,52 @@ public class MainCharacterScript3D : Entity3D,IHealable
         InputManager.playerInputAction.Player.Move.canceled += Move_canceled;
         InputManager.playerInputAction.Player.Move.started += Move_started;
         InputManager.playerInputAction.Player.Interact.performed += Interact_performed;
+        InputManager.playerInputAction.Player.Pause.performed += Pause_performed;
+        InputManager.playerInputAction.Player.SelectMenu.performed += SelectMenu_performed;
+
+        InputManager.playerInputAction.UI.Resume.performed += UIResume_performed;
         currentPlayerStats = GetComponent<PlayerStats>();
         Debug.Log("current damage: " + damage);
         currentPlayerStats.OnMaxHealthChange += OnMaxHealthChange;
         
+    }
+
+    private void SelectMenu_performed(InputAction.CallbackContext obj)
+    {
+        if (GameManager.Instance.ActualGameState == GameState.InGame)
+        {
+            GameManager.Instance.ActualGameState = GameState.InSelect;
+            InputManager.playerInputAction.Player.Disable();
+            InputManager.playerInputAction.UI.Enable();
+
+        }
+    }
+
+    private void UIResume_performed(InputAction.CallbackContext obj)
+    {
+        if (GameManager.Instance.ActualGameState == GameState.Pause || GameManager.Instance.ActualGameState == GameState.InSelect)
+        {
+            GameManager.Instance.ActualGameState = GameState.InGame;
+            InputManager.playerInputAction.UI.Disable();
+            InputManager.playerInputAction.Player.Enable();
+
+        }
+    }
+
+    private void Pause_performed(InputAction.CallbackContext obj)
+    {
+        if(GameManager.Instance.ActualGameState == GameState.InGame)
+        {
+            GameManager.Instance.ActualGameState = GameState.Pause;
+            InputManager.playerInputAction.Player.Disable();
+            InputManager.playerInputAction.UI.Enable();
+
+        }
+        /*else if(GameManager.Instance.ActualGameState == GameState.Pause)
+        {
+            GameManager.Instance.ActualGameState = GameState.InGame;
+
+        }*/
     }
 
     private void Interact_performed(InputAction.CallbackContext obj)

@@ -1,20 +1,23 @@
 using UnityEngine;
 
+public enum GameState
+{
+    MainMenu,
+    InGame,
+    InSelect,
+    InHub,
+    Pause,
+}
+
 public class GameManager : Singleton<GameManager>
 {
     public MainCharacterScript player;
     private int enemyCountOnScreens = 0;
     private int coins = 0;
 
-    public enum GameState
-    {
-        MainMenu,
-        InGame,
-        InHub,
-        Pause,
-    }
 
-    private GameState actualGameState;
+
+    private GameState actualGameState = GameState.InGame;
     public GameState ActualGameState
     {
         get => actualGameState;
@@ -25,6 +28,10 @@ public class GameManager : Singleton<GameManager>
             {
                 case GameState.InGame:
                     Debug.Log("In Game Mode");
+                    Time.timeScale = 1.0f;
+                    UIManager.Instance.SetActiveMenu(false, actualGameState);
+                    InputManager.playerInputAction.Player.Enable();
+                    InputManager.playerInputAction.UI.Disable();
                     break;
                 case GameState.InHub:
                     Debug.Log("In Hub Mode");
@@ -32,12 +39,17 @@ public class GameManager : Singleton<GameManager>
                     break;
                 case GameState.Pause:
                     Debug.Log("In Pause Mode");
-
-                    Time.timeScale = 0;
+                    UIManager.Instance.SetActiveMenu(true, actualGameState);
+                    Time.timeScale = 0.05f;
                     break;
                 case GameState.MainMenu:
                     Debug.Log("In MainMenu Mode");
 
+                    break;
+                case GameState.InSelect:
+                    Debug.Log("In Select Mode");
+                    Time.timeScale = 0.05f;
+                    UIManager.Instance.SetActiveMenu(true, actualGameState);
                     break;
             }
         }
@@ -46,6 +58,7 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
         InitEvents();
+        ActualGameState = GameState.InGame;
     }
     private void InitEvents()
     {
