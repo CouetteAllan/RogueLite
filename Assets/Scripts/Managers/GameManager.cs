@@ -40,7 +40,7 @@ public class GameManager : Singleton<GameManager>
                 case GameState.Pause:
                     Debug.Log("In Pause Mode");
                     UIManager.Instance.SetActiveMenu(true, actualGameState);
-                    Time.timeScale = 0.05f;
+                    Time.timeScale = 0.0f;
                     break;
                 case GameState.MainMenu:
                     Debug.Log("In MainMenu Mode");
@@ -48,7 +48,7 @@ public class GameManager : Singleton<GameManager>
                     break;
                 case GameState.InSelect:
                     Debug.Log("In Select Mode");
-                    Time.timeScale = 0.05f;
+                    Time.timeScale = 0.0f;
                     UIManager.Instance.SetActiveMenu(true, actualGameState);
                     break;
             }

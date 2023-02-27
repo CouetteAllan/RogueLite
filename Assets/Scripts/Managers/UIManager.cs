@@ -11,9 +11,11 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private EventSystem eventSystem;
     [Tooltip("Le premier game object selectionné dans l'UI à l'ouverture du panel Pause")]
     [SerializeField] private GameObject firstGameObjectPauseMenu;
+    private Button pauseMenuButton;
 
     [Tooltip("Le premier game object selectionné dans l'UI à l'ouverture du panel Select")]
     [SerializeField] private GameObject firstGameObjectSelectMenu;
+    private Button selectMenuButton;
 
     [Space]
     [SerializeField] private Slider h_Slider;
@@ -38,6 +40,14 @@ public class UIManager : Singleton<UIManager>
 
 
     private MainCharacterScript3D player = null;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        pauseMenuButton = firstGameObjectPauseMenu.GetComponent<Button>();
+        selectMenuButton = firstGameObjectSelectMenu.GetComponent<Button>();
+    }
+
     public void SetMaxHealth(float health, MainCharacterScript3D player = null)
     {
         h_Slider.maxValue = health;
@@ -124,6 +134,7 @@ public class UIManager : Singleton<UIManager>
         pauseParentGameObject.SetActive(active);
         selectParentGameObject.SetActive(false);
         eventSystem.firstSelectedGameObject = firstGameObjectPauseMenu;
+        pauseMenuButton.Select();
     }
 
     private void SelectMenuActive(bool active)
@@ -131,7 +142,7 @@ public class UIManager : Singleton<UIManager>
         selectParentGameObject.SetActive(active);
         pauseParentGameObject.SetActive(false);
         eventSystem.firstSelectedGameObject = firstGameObjectSelectMenu;
-
+        selectMenuButton.Select();
     }
 
 
