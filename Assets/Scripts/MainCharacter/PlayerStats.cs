@@ -30,6 +30,8 @@ public class PlayerStats : MonoBehaviour
     [SerializeField]
     private PlayerSingleStat attackSpeed;
 
+    private List<EnchantingContext> items = new List<EnchantingContext>();
+
     [SerializeField]
     private Dictionary<StatType, PlayerSingleStat> stats = new Dictionary<StatType, PlayerSingleStat>();
 

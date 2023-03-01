@@ -11,6 +11,7 @@ public class HealthBarBehaviour : MonoBehaviour
     private float enemyMaxHealth;
     private Coroutine fillBarCoroutine;
 
+
     public void SetMaxHealth(float health, EnemyEntity3D _enemy)
     {
         slider.maxValue = health;
@@ -18,6 +19,7 @@ public class HealthBarBehaviour : MonoBehaviour
         enemyHealth = health;
         this.enemy = _enemy;
         slider.gameObject.SetActive(false);
+        enemy.OnChangeHealth += SetHealth;
 
     }
 
@@ -40,5 +42,11 @@ public class HealthBarBehaviour : MonoBehaviour
             yield return null;
         }
         slider.value = targetFill;
+    }
+
+    private void OnDisable()
+    {
+        enemy.OnChangeHealth -= SetHealth;
+
     }
 }

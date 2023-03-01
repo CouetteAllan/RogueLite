@@ -51,6 +51,8 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 
     private List<IHittable3D> enemiesThatBeenHit = new List<IHittable3D>();
 
+    public List<IEnchantType> enchants;
+    public IEnchantType enchant;
 
     private void OnDisable()
     {
@@ -62,6 +64,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         rb = GetComponent<Rigidbody>();
         playerInput = GetComponent<PlayerInput>();
         playerInput.onControlsChanged += PlayerInput_onControlsChanged;
+        
 
     }
 
@@ -83,6 +86,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         player = GetComponent<MainCharacterScript3D>();
         animator = this.GetComponent<Animator>();
         animator.SetFloat("AttackSpeedModifier", attackSpeed);
+        enchant = new FireEnchant();
     }
 
     private void PlayerInput_onControlsChanged(PlayerInput obj)
@@ -248,7 +252,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
                     if (!hitObject.GotHit)
                     {
                         enemiesThatBeenHit.Add(hitObject);
-                        hitObject.OnHit(damageOutput, this);
+                        DealDamage(hitObject, damageOutput);
                         hitObject.GotHit = true;
                     }
 
@@ -264,6 +268,12 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 
         yield break;
 
+    }
+
+    private void DealDamage(IHittable3D hitObject, float damageOutput)
+    {
+        hitObject.OnHit(damageOutput, this);
+        enchant?.EnchantEffect(hitObject);
     }
 
     private void RangedAttack()

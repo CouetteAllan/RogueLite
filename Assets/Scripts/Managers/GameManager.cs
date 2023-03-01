@@ -29,7 +29,7 @@ public class GameManager : Singleton<GameManager>
                 case GameState.InGame:
                     Debug.Log("In Game Mode");
                     Time.timeScale = 1.0f;
-                    UIManager.Instance.SetActiveMenu(false, actualGameState);
+                    UIManager.Instance.SetActiveMenu(false, value);
                     InputManager.playerInputAction.Player.Enable();
                     InputManager.playerInputAction.UI.Disable();
                     break;

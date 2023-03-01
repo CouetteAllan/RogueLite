@@ -6,8 +6,7 @@ using CodeMonkey.Utils;
 public class EnemyEntity : Entity, IHitSource
 {
     public EnemySO enemyData;
-
-    private new string name = "";
+    
 
     private MainCharacterScript player;
     private Vector2 playerPos;
@@ -89,7 +88,6 @@ public class EnemyEntity : Entity, IHitSource
                 startAttack = StartMeleeAttack;
                 break;
             case EnemySO.Behaviour.Ranged:
-                updateMovement = UpdateMovementRunAwayFromPlayer;
                 startAttack = StartRangedAttack;
                 break;
         }
@@ -129,17 +127,6 @@ public class EnemyEntity : Entity, IHitSource
 
     }
 
-    private void UpdateMovementRunAwayFromPlayer()
-    {
-        //Un vecteur direction
-        Vector2 direction = this.rb2D.position - playerRB.position;
-        //Une velocité
-        Vector2 movement = direction.normalized * movementSpeed / 2;
-
-        this.rb2D.velocity = movement;
-
-    }
-
     public float GetHealth()
     {
         return this.health;
@@ -166,12 +153,6 @@ public class EnemyEntity : Entity, IHitSource
         animator.SetBool("IsMoving", canMove);
         yield return new WaitForSeconds(seconds);
         canMove = true;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if(rb2D != null)
-            Gizmos.DrawWireSphere(this.rb2D.position, enemyData.rangeRadius);
     }
 
     public void Flip()
@@ -202,18 +183,7 @@ public class EnemyEntity : Entity, IHitSource
                 }
                 //cours vers le joueur;
                 break;
-            /*case EnemySO.Behaviour.Ranged:
-                playerInRange = Physics2D.OverlapCircle(this.rb2D.position, enemyData.rangeRadius - 1f, playerLayer); //joueur trop proche ! il faut fuir
-                if (playerInRange != null)
-                {
-                    player = playerInRange.GetComponent<MainCharacterScript>();
-                    playerRB = playerInRange.attachedRigidbody;
-                }
-                break;*/
         }
-
-
-        
         //tant que joueur pas trouvé
         while (player == null)
         {
@@ -240,10 +210,6 @@ public class EnemyEntity : Entity, IHitSource
         yield break;
     }
 
-    IEnumerator AIPatrol()
-    {
-        yield return null;
-    }
     IEnumerator AIMoveToPlayer()
     {
         animator.SetBool("IsMoving", canMove);
@@ -285,7 +251,7 @@ public class EnemyEntity : Entity, IHitSource
         yield break;
     }
 
-    IEnumerator AIRunAwayFromPlayer()
+    /*IEnumerator AIRunAwayFromPlayer()
     {
         while (inAttackRange)
         {
@@ -302,9 +268,8 @@ public class EnemyEntity : Entity, IHitSource
         lastPlayerPos = playerRB.position;
         StartCoroutine(AIAttack());
         yield break;
-    }
+    }*/
 
-    //TelegraphTime est le temps d'animation possible avant que l'ennemi attaque. Le temps de voir le coup en gros. Après la petite animation de préparation, le coup sera porté.
     IEnumerator AIAttack()
     {
         animator.SetBool("IsMoving", false);
@@ -313,7 +278,7 @@ public class EnemyEntity : Entity, IHitSource
         yield return null;
         yield return StartCoroutine(WaitForAttack());
         gotCanceled = false;
-        yield return new WaitForSeconds(0.5f); //après 1sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
+        yield return new WaitForSeconds(0.5f); //après 0.5sec, reprend son mouvement (c'est un peu sa vitesse d'attaque)
         StartCoroutine(AIFindTarget());
         yield break;
     }

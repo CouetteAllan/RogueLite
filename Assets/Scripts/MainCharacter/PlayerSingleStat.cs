@@ -5,8 +5,6 @@ using System.Collections.ObjectModel;
 
 namespace CharacterStats
 {
-
-
     [Serializable]
     public class PlayerSingleStat //Une stat du joueur (ou de l'entité ?) à attribuer (ça peut être les dégâts, le crit etc)
     {

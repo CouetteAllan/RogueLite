@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -15,6 +13,12 @@ public interface IHittable3D
     void OnHit(float _value, IHitSource3D source);
 
     bool GotHit { get; set; }
+}
+
+public interface IEffectable
+{
+    void AddEffect(IEnchantType effect);
+    void TickEffect(float duration, IEnchantType effect);
 }
 
 public interface IPickable

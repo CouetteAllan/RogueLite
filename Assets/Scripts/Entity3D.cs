@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class Entity3D : MonoBehaviour, IHittable3D
+public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 {
     [SerializeField] protected float health;
     [SerializeField] protected float maxHealth;
@@ -26,8 +26,14 @@ public class Entity3D : MonoBehaviour, IHittable3D
 
     public delegate void OnHitEvent();
     public OnHitEvent EventOnHit;
+
+    public event Action<float> OnChangeHealth;
+    public event Action<bool> OnBurn;
+
+    private EnemyEffectScript effectScript;
     protected bool isInvincible = false;
     public bool GotHit { get => isInvincible; set => isInvincible = value; }
+
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -58,6 +64,7 @@ public class Entity3D : MonoBehaviour, IHittable3D
         if (health <= 0)
             this.Die();
 
+        OnChangeHealth?.Invoke(health);
     }
 
     public virtual void Die()
@@ -90,7 +97,6 @@ public class Entity3D : MonoBehaviour, IHittable3D
         if (isDead || isInvincible)
             return;
         ChangeHealth(_value,source);
-        Debug.Log("Ennemi touchey: " + _value + " "+ this.name);
         EventOnHit?.Invoke();
     }
 
@@ -107,5 +113,39 @@ public class Entity3D : MonoBehaviour, IHittable3D
     public void SetEntityMaxHealth(float _maxHealth)
     {
         maxHealth = _maxHealth;
+    }
+
+    Coroutine burnCoroutine;
+    public void Burn()
+    {
+        float fireDuration = 3.0f;
+        if (burnCoroutine != null)
+            StopCoroutine(burnCoroutine);
+        burnCoroutine = StartCoroutine(BurnCoroutine(fireDuration));
+    }
+
+    IEnumerator BurnCoroutine(float fireDuration)
+    {
+        OnBurn?.Invoke(true);
+        float tickSeconds = 0.6f;
+        float t = 0.0f;
+        while (t < fireDuration)
+        {
+            ChangeHealth(-3);
+            yield return new WaitForSeconds(tickSeconds);
+            t += tickSeconds;
+        }
+        OnBurn?.Invoke(false);
+
+    }
+
+    public void AddEffect(IEnchantType effect)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void TickEffect(float duration, IEnchantType effect)
+    {
+        effect.EnchantEffect(this);
     }
 }
