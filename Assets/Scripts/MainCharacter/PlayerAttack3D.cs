@@ -86,7 +86,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         player = GetComponent<MainCharacterScript3D>();
         animator = this.GetComponent<Animator>();
         animator.SetFloat("AttackSpeedModifier", attackSpeed);
-        enchant = new FireEnchant();
+        enchant = new FireEnchant(2);
     }
 
     private void PlayerInput_onControlsChanged(PlayerInput obj)

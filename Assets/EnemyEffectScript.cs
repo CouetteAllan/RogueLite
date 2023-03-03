@@ -16,9 +16,9 @@ public class EnemyEffectScript : MonoBehaviour
     private void PlayBurn(bool play)
     {
         if(play)
-            burnEffect.Play();
+            burnEffect?.Play();
         else
-            burnEffect.Stop();
+            burnEffect?.Stop();
     }
 
 

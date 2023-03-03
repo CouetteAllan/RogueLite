@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+public enum EffectsEnum
+{
+    Burn,
+    Poison
+}
 public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 {
     [SerializeField] protected float health;
@@ -139,7 +144,19 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 
     }
 
-    public void AddEffect(IEnchantType effect)
+    public void CallEffect(EffectsEnum effect, bool display)
+    {
+        switch (effect)
+        {
+            case EffectsEnum.Burn:
+                OnBurn?.Invoke(display);
+                break;
+            case EffectsEnum.Poison:
+                break;
+        }
+    }
+
+        public void AddEffect(IEnchantType effect)
     {
         throw new NotImplementedException();
     }
@@ -148,4 +165,5 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
     {
         effect.EnchantEffect(this);
     }
+    
 }

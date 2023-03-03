@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace CodeMonkey.Utils {
 
@@ -233,7 +234,7 @@ namespace CodeMonkey.Utils {
 
         // Get Mouse Position in World with Z = 0f
         public static Vector3 GetMouseWorldPosition() {
-            Vector3 vec = GetMouseWorldPositionWithZ(Input.mousePosition, Camera.main);
+            Vector3 vec = GetMouseWorldPositionWithZ(Mouse.current.position.ReadValue(), Camera.main);
             vec.z = 0f;
             return vec;
         }
