@@ -34,6 +34,7 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 
     public event Action<float> OnChangeHealth;
     public event Action<bool> OnBurn;
+    public event Action<bool> OnPoison;
 
     private EnemyEffectScript effectScript;
     protected bool isInvincible = false;
@@ -48,7 +49,7 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 
     // Update is called once per frame
 
-    public virtual void ChangeHealth(float _value, IHitSource3D source = null)
+    public virtual void ChangeHealth(float _value, Color color, IHitSource3D source = null)
     {
         if (isDead)
             return;
@@ -64,7 +65,7 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 
         health = Mathf.Clamp(health += _value, 0, maxHealth);
 
-        DamagePoolingScript.Instance.CreatePopUp(Mathf.RoundToInt(_value), this.rb.position + Vector3.up * 0.7f);
+        DamagePoolingScript.Instance.CreatePopUp(Mathf.RoundToInt(_value), this.rb.position + Vector3.up * 0.7f, color);
 
         if (health <= 0)
             this.Die();
@@ -101,7 +102,7 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
     {
         if (isDead || isInvincible)
             return;
-        ChangeHealth(_value,source);
+        ChangeHealth(_value,Color.white,source);
         EventOnHit?.Invoke();
     }
 
@@ -120,30 +121,6 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
         maxHealth = _maxHealth;
     }
 
-    Coroutine burnCoroutine;
-    public void Burn()
-    {
-        float fireDuration = 3.0f;
-        if (burnCoroutine != null)
-            StopCoroutine(burnCoroutine);
-        burnCoroutine = StartCoroutine(BurnCoroutine(fireDuration));
-    }
-
-    IEnumerator BurnCoroutine(float fireDuration)
-    {
-        OnBurn?.Invoke(true);
-        float tickSeconds = 0.6f;
-        float t = 0.0f;
-        while (t < fireDuration)
-        {
-            ChangeHealth(-3);
-            yield return new WaitForSeconds(tickSeconds);
-            t += tickSeconds;
-        }
-        OnBurn?.Invoke(false);
-
-    }
-
     public void CallEffect(EffectsEnum effect, bool display)
     {
         switch (effect)
@@ -152,11 +129,12 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
                 OnBurn?.Invoke(display);
                 break;
             case EffectsEnum.Poison:
+                OnPoison?.Invoke(display);
                 break;
         }
     }
 
-        public void AddEffect(IEnchantType effect)
+    public void AddEffect(IEnchantType effect)
     {
         throw new NotImplementedException();
     }

@@ -32,7 +32,7 @@ public class DamagePoolingScript : Singleton<DamagePoolingScript>
         return null;
     }
 
-    public DamagePopUpScript CreatePopUp(int value, Vector3 pos)
+    public DamagePopUpScript CreatePopUp(int value, Vector3 pos, Color color = new Color())
     {
         //GameObject popUp = Instantiate(popUpTextPrefab, pos, Quaternion.identity);
         GameObject popUp = GetPoolObject();
@@ -43,9 +43,11 @@ public class DamagePoolingScript : Singleton<DamagePoolingScript>
             DamagePopUpScript popUpScript = popUp.GetComponent<DamagePopUpScript>();
             popUpScript.SetUp(value);
             popUpScript.StartAnimation();
+            popUpScript.SetColorText(color);
             return popUpScript;
         }
 
         return null;
     }
+
 }

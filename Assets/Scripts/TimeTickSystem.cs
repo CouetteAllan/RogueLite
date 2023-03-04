@@ -28,7 +28,6 @@ public class TimeTickSystem : MonoBehaviour
             tickTimer -= TICK_TIMER_MAX;
             tick++;
             OnTick?.Invoke(this, new OnTickEventArgs { _tick = tick });
-            CMDebug.TextPopup("tick: " + tick,Vector3.zero);
         }
     }
 }

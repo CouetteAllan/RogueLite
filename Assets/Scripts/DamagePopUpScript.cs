@@ -27,6 +27,11 @@ public class DamagePopUpScript : MonoBehaviour
         StartCoroutine(Moving());
     }
 
+    public void SetColorText(Color color)
+    {
+        textMeshPro.color = color;
+    }
+
     IEnumerator Moving()
     {
         Vector3 pos = this.transform.position;

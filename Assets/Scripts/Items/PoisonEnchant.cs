@@ -5,27 +5,27 @@ using UnityEngine;
 public class PoisonEnchant : IEnchantType
 {
     public float poisonDamage = 1.0f;
+    TickBehaviour poisonEffect;
+    private List<TickBehaviour> poisonEffects;
+
+    public PoisonEnchant()
+    {
+
+    }
+
+    public PoisonEnchant(float damage) : this()
+    {
+        poisonDamage = damage;
+    }
+
     public void EnchantEffect(IHittable3D hitObject)
     {
-        //color le text en rouge
-        //empoisonne l'ennemi
-        //fais des dégâts bonus
         Entity3D entity = hitObject as Entity3D;
+        int tickToPoison = 20; //4 seconds
+        int moduloTick = 4; //every 4 ticks = every 0.8 seconds
+        poisonEffect = new TickBehaviour(poisonDamage, tickToPoison, moduloTick, EffectsEnum.Poison, entity); 
+
     }
 
 }
 
-public class PoisonBehaviour
-{
-    private int stack = 0;
-    private int tickDamage;
-    PoisonBehaviour(float damage, int ticksToDamage)
-    {
-
-    }
-
-    public void AddStack(int _stack)
-    {
-        stack += _stack;
-    }
-}

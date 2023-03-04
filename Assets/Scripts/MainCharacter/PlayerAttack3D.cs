@@ -54,10 +54,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     public List<IEnchantType> enchants;
     public IEnchantType enchant;
 
-    private void OnDisable()
-    {
-        InputManager.playerInputAction.Player.Attack.performed -= OnAttack;
-    }
+    
     void Awake()
     {
         InputManager.playerInputAction.Player.Attack.performed += OnAttack;
@@ -66,6 +63,10 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         playerInput.onControlsChanged += PlayerInput_onControlsChanged;
         
 
+    }
+    private void OnDisable()
+    {
+        InputManager.playerInputAction.Player.Attack.performed -= OnAttack;
     }
 
     private void Start()
@@ -86,7 +87,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         player = GetComponent<MainCharacterScript3D>();
         animator = this.GetComponent<Animator>();
         animator.SetFloat("AttackSpeedModifier", attackSpeed);
-        enchant = new FireEnchant(2);
+        enchant = new PoisonEnchant(1);
     }
 
     private void PlayerInput_onControlsChanged(PlayerInput obj)
@@ -106,11 +107,6 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 
 
     }
-
-    public void SetAttackSpeed(float _attackspeed)
-    {
-        attackSpeed = _attackspeed;
-    }
     public void OnAttack(InputAction.CallbackContext context)
     {
         if (isAttacking)
@@ -124,6 +120,11 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         aimingHandle();
     }
 
+    public void SetAttackSpeed(float _attackspeed)
+    {
+        attackSpeed = _attackspeed;
+    }
+
     public void ActivateHitBox()
     {
         if (actualWeapon == null)
@@ -131,6 +132,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         attackHandle();
     }
 
+    #region MouseHandlings
     private Vector3 GetMousePosInTheWorld()
     {
         var ray = _cam.ScreenPointToRay(Mouse.current.position.ReadValue());
@@ -162,6 +164,8 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         offset = rb.position + mouseAimDir.normalized;
         attackType();
     }
+    #endregion
+    #region GamePadHandling
 
     private void GamePadAimingHandle()
     {
@@ -198,7 +202,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         attackType();
         
     }
-
+    #endregion
     private void MeleeAttack()
     {
         if (enemiesThatBeenHit != null)
@@ -310,5 +314,8 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         hand.GetComponent<SpriteRenderer>().sprite = actualWeapon.sprite;
     }
 
-
+    public void SetEnchantment(IEnchantType _enchantType)
+    {
+        enchant = _enchantType;
+    }
 }

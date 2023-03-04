@@ -244,7 +244,7 @@ public class MainCharacterScript3D : Entity3D,IHealable
 
     public void OnHeal(float heal)
     {
-        ChangeHealth(heal);
+        ChangeHealth(heal,Color.green); ;
     }
     
 
@@ -375,7 +375,7 @@ public class MainCharacterScript3D : Entity3D,IHealable
         StartCoroutine(InvincibilityHandle(invincibleTime));
     }
 
-    public override void ChangeHealth(float _value, IHitSource3D source = null)
+    public override void ChangeHealth(float _value, Color color,IHitSource3D source = null)
     {
         if (isDead)
             return;

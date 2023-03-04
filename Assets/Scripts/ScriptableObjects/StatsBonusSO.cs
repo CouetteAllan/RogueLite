@@ -38,7 +38,7 @@ public class StatsBonusSO : ItemsSO
                 break;
 
             case BonusEffect.HealthBonus:
-                player.ChangeHealth(amount);
+                player.ChangeHealth(amount,Color.green);
                 player.GetPlayerStats().AddModifier(new StatModifier(amount, type, this), StatType.MaxHealth);
 
                 break;

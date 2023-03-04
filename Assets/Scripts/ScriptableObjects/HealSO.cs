@@ -8,7 +8,7 @@ public class HealSO : ItemsSO
     public float healAmount = 10f;
     public override void DoEffect(MainCharacterScript3D player)
     {
-        player.ChangeHealth(healAmount);
+        player.ChangeHealth(healAmount,Color.green);
         //jouer un audio
         //jouer un event peut-être ?
         OnPickUpHealItem?.Invoke();
