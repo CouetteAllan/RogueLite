@@ -5,6 +5,7 @@ using System;
 
 public enum EffectsEnum
 {
+    Null,
     Burn,
     Poison
 }
@@ -22,6 +23,9 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 
     protected bool isDead = false;
 
+    protected EffectsEnum status;
+    public EffectsEnum Status { get => status; set => status = value; }
+    public TickBehaviour tickRef = null;
 
     protected Rigidbody rb;
     protected Animator animator;

@@ -15,6 +15,12 @@ public class EnemyEffectScript : MonoBehaviour
         enemy.OnBurn += PlayBurn;
         enemy.OnPoison += Enemy_OnPoison;
     }
+    
+    private void OnDisable()
+    {
+        enemy.OnBurn -= PlayBurn;
+        enemy.OnPoison -= Enemy_OnPoison;
+    }
 
     private void Enemy_OnPoison(bool play)
     {

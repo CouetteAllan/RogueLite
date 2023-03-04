@@ -284,6 +284,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MainCharacter3D
       objectReference: {fileID: 0}
+    - target: {fileID: 5794144602878211607, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
+      propertyPath: Damage.baseValue
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8955158973526170109, guid: d2b4426ecc01e2f489231fbb5252d9c2, type: 3}
       propertyPath: hitbox
       value: 
