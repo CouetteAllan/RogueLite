@@ -61,9 +61,9 @@ public class ItemsScript : MonoBehaviour,IPickable3D, IInteractable
         OnPick(player);
     }
 
-    public StatsBonusSO GetItemData()
+    public BonusSO GetItemData()
     {
-        return this.itemData as StatsBonusSO;
+        return this.itemData as BonusSO;
     }
 
 }

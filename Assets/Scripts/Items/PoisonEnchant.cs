@@ -20,6 +20,8 @@ public class PoisonEnchant : IEnchantType
     public void EnchantEffect(IHittable3D hitObject)
     {
         Entity3D entity = hitObject as Entity3D;
+        if (entity == null)
+            return;
         int tickToPoison = 20; //4 seconds
         int moduloTick = 4; //every 4 ticks = every 0.8 seconds
         if(entity.Status != EffectsEnum.Poison)

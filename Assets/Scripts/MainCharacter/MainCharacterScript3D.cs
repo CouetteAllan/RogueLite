@@ -325,6 +325,11 @@ public class MainCharacterScript3D : Entity3D,IHealable
         playerAttackScript.SetActualWeapon(weaponPickedUpData);
     }
 
+    public void SetEnchant(IEnchantType enchant)
+    {
+        playerAttackScript.SetEnchantment(enchant);
+    }
+
 
     public Animator GetAnimator()
     {

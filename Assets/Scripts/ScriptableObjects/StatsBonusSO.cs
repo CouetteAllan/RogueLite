@@ -2,11 +2,8 @@ using UnityEngine;
 using CharacterStats;
 
 [CreateAssetMenu(fileName = "New Bonus", menuName = "Items/Bonus/Object")]
-public class StatsBonusSO : ItemsSO
+public class StatsBonusSO : BonusSO
 {
-    public string description = "Insert Bonus description to display";
-    public new string name = "Bonus Name";
-
     public enum BonusEffect
     {
         DamageBonus,

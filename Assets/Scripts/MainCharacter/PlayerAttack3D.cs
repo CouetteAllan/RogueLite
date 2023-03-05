@@ -87,7 +87,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         player = GetComponent<MainCharacterScript3D>();
         animator = this.GetComponent<Animator>();
         animator.SetFloat("AttackSpeedModifier", attackSpeed);
-        enchant = new PoisonEnchant(1);
+        enchant = new FireEnchant(3);
     }
 
     private void PlayerInput_onControlsChanged(PlayerInput obj)
@@ -279,6 +279,10 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         hitObject.OnHit(damageOutput, this);
         enchant?.EnchantEffect(hitObject);
     }
+    public void SetEnchantment(IEnchantType _enchantType)
+    {
+        enchant = _enchantType;
+    }
 
     private void RangedAttack()
     {
@@ -314,8 +318,5 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
         hand.GetComponent<SpriteRenderer>().sprite = actualWeapon.sprite;
     }
 
-    public void SetEnchantment(IEnchantType _enchantType)
-    {
-        enchant = _enchantType;
-    }
+   
 }

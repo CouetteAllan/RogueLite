@@ -1,10 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class TickBehaviour
 {
     private float damage;
+    private float baseDamageTick;
     private int damageTick;
     private int damageTickMax;
     private bool isDamaging;
@@ -15,6 +15,8 @@ public class TickBehaviour
     delegate void ApplyTickDamage();
     ApplyTickDamage applyDamage;
 
+    public static event Action<EffectsEnum> OnAddEffect;
+
     public TickBehaviour(float _damage, int _tickToDamage, int _moduloToTick, EffectsEnum _effectType, Entity3D _entity)
     {
         damageTick = 0;
@@ -22,6 +24,7 @@ public class TickBehaviour
         isDamaging = true;
         entity = _entity;
         damage = _damage;
+        baseDamageTick = _damage;
         moduloTick = _moduloToTick;
         effectType = _effectType;
         TimeTickSystem.OnTick += TimeTickSystem_OnTick;
@@ -38,6 +41,7 @@ public class TickBehaviour
             {
                 isDamaging = false;
                 entity.CallEffect(effectType, false);
+                this.damage = baseDamageTick;
             }
             else
             {
