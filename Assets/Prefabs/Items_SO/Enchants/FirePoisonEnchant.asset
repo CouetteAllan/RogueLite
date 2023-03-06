@@ -10,13 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 25ee2848fdf7e234485e474547a6f934, type: 3}
-  m_Name: FireEnchant
+  m_Name: FirePoisonEnchant
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 17102b87836d2de43bab809c0ac190f2, type: 3}
+  sprite: {fileID: 21300000, guid: 071460795786dfc4dbbdd4f483ca25fe, type: 3}
   animator: {fileID: 0}
   sound: {fileID: 0}
-  description: "Ajoute un effet de br\xFBlure \xE0 votre arme"
-  name: FEEEUUUU
+  description: "Br\xFBle et empoisonne les ennemis"
+  name: Salamandre
   enchantsTypesAndEffect:
   - enchanteffect: 1
-    baseDamage: 5
+    baseDamage: 4
+  - enchanteffect: 2
+    baseDamage: 2

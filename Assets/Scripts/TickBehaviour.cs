@@ -42,6 +42,7 @@ public class TickBehaviour
                 isDamaging = false;
                 entity.CallEffect(effectType, false);
                 this.damage = baseDamageTick;
+                entity.StatusDictionary.Remove(effectType);
             }
             else
             {

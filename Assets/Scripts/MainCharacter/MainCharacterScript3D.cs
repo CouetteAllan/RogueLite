@@ -185,21 +185,6 @@ public class MainCharacterScript3D : Entity3D,IHealable
         HandleInteraction();
 
     }
-
-    IEnumerator CustomUpdate()
-    {
-        while (true)
-        {
-            IInteractable interactObject = GetInteractableObject();
-            if(interactObject != null)
-            {
-
-            }
-            yield return new WaitForSeconds(0.12f);
-        }
-
-    }
-
     private void FixedUpdate()
     {
         UpdateMovement();
@@ -217,15 +202,9 @@ public class MainCharacterScript3D : Entity3D,IHealable
         rb.velocity = new Vector3(targetMovement.x * (currentPlayerStats.GetStat(StatType.MovementSpeed).Value * speedcurve.Evaluate(timeCurve)), rb.velocity.y, targetMovement.z * (currentPlayerStats.GetStat(StatType.MovementSpeed).Value * speedcurve.Evaluate(timeCurve)));
     }
 
-    private void Move_canceled(InputAction.CallbackContext context)
-    {
-        timeCurve = 0f;
-    }
+    private void Move_canceled(InputAction.CallbackContext context) => timeCurve = 0f;
 
-    private void Move_started(InputAction.CallbackContext context)
-    {
-        timeCurve = 0f;
-    }
+    private void Move_started(InputAction.CallbackContext context) => timeCurve = 0f;
 
     private void Dash(InputAction.CallbackContext context)
     {
@@ -328,6 +307,11 @@ public class MainCharacterScript3D : Entity3D,IHealable
     public void SetEnchant(IEnchantType enchant)
     {
         playerAttackScript.SetEnchantment(enchant);
+    }
+
+    public void AddEnchant(IEnchantType enchant)
+    {
+        playerAttackScript.AddEnchantment(enchant);
     }
 
 

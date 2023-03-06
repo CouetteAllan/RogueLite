@@ -1,33 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [CreateAssetMenu(fileName = "New Enchant", menuName = "Items/Bonus/Enchant")]
 public class EnchantSO : BonusSO
 {
-    public IEnchantType enchantType;
-    public EffectsEnum enchanteffect;
+    public List<IEnchantType> enchantTypesList = new List<IEnchantType>();
 
-    public float effectDamage = 1.0f;
+    public EnchantTypeAndDamage[] enchantsTypesAndEffect;
 
     private void CreateEnchant()
     {
-        switch (enchanteffect)
+        foreach(EnchantTypeAndDamage enchant in enchantsTypesAndEffect)
         {
-            case EffectsEnum.Null:
-                break;
-            case EffectsEnum.Burn:
-                enchantType = new FireEnchant(effectDamage);
-                break;
-            case EffectsEnum.Poison:
-                enchantType = new PoisonEnchant(effectDamage);
-                break;
+            switch (enchant.enchanteffect)
+            {
+                case EffectsEnum.Null:
+                    break;
+                case EffectsEnum.Burn:
+                    enchantTypesList.Add(new FireEnchant(enchant.baseDamage));
+                    break;
+                case EffectsEnum.Poison:
+                    enchantTypesList.Add(new PoisonEnchant(enchant.baseDamage));
+                    break;
+            }
         }
+        
     }
 
     public override void DoEffect(MainCharacterScript3D player)
     {
         CreateEnchant();
-        player.SetEnchant(enchantType);
+        foreach(var enchant in enchantTypesList)
+        {
+            player.AddEnchant(enchant);
+
+        }
     }
+}
+
+[Serializable]
+public struct EnchantTypeAndDamage
+{
+    public EffectsEnum enchanteffect;
+    public float baseDamage;
 }

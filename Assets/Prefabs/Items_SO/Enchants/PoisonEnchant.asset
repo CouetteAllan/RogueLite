@@ -17,4 +17,6 @@ MonoBehaviour:
   sound: {fileID: 0}
   description: "Donne un effet de poison \xE0 votre arme"
   name: Poison
-  enchanteffect: 2
+  enchantsTypesAndEffect:
+  - enchanteffect: 2
+    baseDamage: 3

@@ -5,12 +5,8 @@ using UnityEngine;
 public class PoisonEnchant : IEnchantType
 {
     public float poisonDamage = 1.0f;
-    private List<TickBehaviour> poisonEffects;
 
-    public PoisonEnchant()
-    {
-
-    }
+    public PoisonEnchant() { }
 
     public PoisonEnchant(float damage) : this()
     {
@@ -24,15 +20,17 @@ public class PoisonEnchant : IEnchantType
             return;
         int tickToPoison = 20; //4 seconds
         int moduloTick = 4; //every 4 ticks = every 0.8 seconds
-        if(entity.Status != EffectsEnum.Poison)
+
+
+        if (entity.StatusDictionary.TryGetValue(EffectsEnum.Poison, out TickBehaviour tick))
         {
-            entity.tickRef = new TickBehaviour(poisonDamage, tickToPoison, moduloTick, EffectsEnum.Poison, entity);
-            entity.Status = EffectsEnum.Poison;
+            tick.AddStack(1);
         }
         else
         {
-            entity.tickRef.AddStack(1);
+            entity.StatusDictionary.Add(EffectsEnum.Poison, new TickBehaviour(poisonDamage, tickToPoison, moduloTick, EffectsEnum.Poison, entity));
         }
+
 
     }
 

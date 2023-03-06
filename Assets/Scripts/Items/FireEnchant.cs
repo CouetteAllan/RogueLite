@@ -13,14 +13,13 @@ public class FireEnchant : IEnchantType
         Entity3D entity = hitObject as Entity3D;
         int tickToBurn = 15;
         int moduloTick = 3; //damage every 3 ticks so every 0.6 seconds
-        if (entity.Status != EffectsEnum.Burn)
+        if (entity.StatusDictionary.TryGetValue(EffectsEnum.Burn,out TickBehaviour tick))
         {
-            entity.tickRef = new TickBehaviour(fireDamage, tickToBurn, moduloTick, EffectsEnum.Burn, entity);
-            entity.Status = EffectsEnum.Burn;
+            tick.ResetTick();
         }
         else
         {
-            entity.tickRef.ResetTick();
+            entity.StatusDictionary.Add(EffectsEnum.Burn, new TickBehaviour(fireDamage, tickToBurn, moduloTick, EffectsEnum.Burn, entity));
         }
 
     }

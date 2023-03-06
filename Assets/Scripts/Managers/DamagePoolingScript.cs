@@ -7,7 +7,7 @@ public class DamagePoolingScript : Singleton<DamagePoolingScript>
     [SerializeField] GameObject popUpTextPrefab;
 
     private List<GameObject> pooledObjects = new List<GameObject>();
-    private int amountToPool = 10;
+    private int amountToPool = 15;
 
     void Start()
     {

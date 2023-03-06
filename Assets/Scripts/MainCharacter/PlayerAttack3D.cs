@@ -51,7 +51,7 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
 
     private List<IHittable3D> enemiesThatBeenHit = new List<IHittable3D>();
 
-    public List<IEnchantType> enchants;
+    public List<IEnchantType> enchants = new List<IEnchantType>();
     public IEnchantType enchant;
 
     
@@ -278,10 +278,27 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     {
         hitObject.OnHit(damageOutput, this);
         enchant?.EnchantEffect(hitObject);
+        if(enchants != null)
+        {
+            foreach(IEnchantType enchant in enchants)
+            {
+                enchant.EnchantEffect(hitObject);
+            }
+        }
     }
     public void SetEnchantment(IEnchantType _enchantType)
     {
         enchant = _enchantType;
+    }
+
+    public void SetEnchantmentList(List<IEnchantType> enchantTypes)
+    {
+        enchants = new List<IEnchantType>(enchantTypes);
+    }
+
+    public void AddEnchantment(IEnchantType _enchantType)
+    {
+        enchants.Add(_enchantType);
     }
 
     private void RangedAttack()

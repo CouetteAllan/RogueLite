@@ -22,11 +22,10 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
     [SerializeField] protected GameObject graphObject;
 
     protected bool isDead = false;
+    
 
-    protected EffectsEnum status;
-    public EffectsEnum Status { get => status; set => status = value; }
-    public TickBehaviour tickRef = null;
-
+    private Dictionary<EffectsEnum, TickBehaviour> statusDictionary = new Dictionary<EffectsEnum, TickBehaviour>();
+    public Dictionary<EffectsEnum,TickBehaviour> StatusDictionary { get => statusDictionary; set => statusDictionary = value ; }
     protected Rigidbody rb;
     protected Animator animator;
 
