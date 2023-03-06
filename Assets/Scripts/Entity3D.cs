@@ -7,7 +7,8 @@ public enum EffectsEnum
 {
     Null,
     Burn,
-    Poison
+    Poison,
+    Ice
 }
 public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
 {
@@ -15,6 +16,12 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
     [SerializeField] protected float maxHealth;
     [SerializeField] protected float damage;
     [SerializeField] protected float movementSpeed;
+    public float MovementSpeed {
+        get
+        {
+            return movementSpeed;
+
+        } set => movementSpeed = value; }
 
     [Space]
     [Tooltip("Force appliquée lorsque l'entitée est frappée")]
@@ -38,6 +45,7 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
     public event Action<float> OnChangeHealth;
     public event Action<bool> OnBurn;
     public event Action<bool> OnPoison;
+    public event Action<bool> OnIced;
 
     private EnemyEffectScript effectScript;
     protected bool isInvincible = false;
@@ -134,6 +142,11 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
             case EffectsEnum.Poison:
                 OnPoison?.Invoke(display);
                 break;
+            case EffectsEnum.Null:
+                break;
+            case EffectsEnum.Ice:
+                OnIced?.Invoke(display);
+                break;
         }
     }
 
@@ -146,5 +159,5 @@ public class Entity3D : MonoBehaviour, IHittable3D, IEffectable
     {
         effect.EnchantEffect(this);
     }
-    
+
 }

@@ -19,6 +19,6 @@ MonoBehaviour:
   name: Salamandre
   enchantsTypesAndEffect:
   - enchanteffect: 1
-    baseDamage: 4
+    baseValue: 3
   - enchanteffect: 2
-    baseDamage: 2
+    baseValue: 2

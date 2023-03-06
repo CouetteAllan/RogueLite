@@ -19,4 +19,4 @@ MonoBehaviour:
   name: Poison
   enchantsTypesAndEffect:
   - enchanteffect: 2
-    baseDamage: 3
+    baseValue: 3

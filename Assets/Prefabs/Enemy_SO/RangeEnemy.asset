@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef985af0436e31b45b749b55606cd049, type: 3}
   m_Name: RangeEnemy
   m_EditorClassIdentifier: 
-  health: 20
+  health: 30
   animator: {fileID: 9100000, guid: 723a51d1b9d5c29468b43fd3b9eb0f48, type: 2}
   speed: 10
   name: Ranged

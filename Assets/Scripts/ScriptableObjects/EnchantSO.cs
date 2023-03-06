@@ -19,14 +19,17 @@ public class EnchantSO : BonusSO
                 case EffectsEnum.Null:
                     break;
                 case EffectsEnum.Burn:
-                    enchantTypesList.Add(new FireEnchant(enchant.baseDamage));
+                    enchantTypesList.Add(new FireEnchant(enchant.baseValue));
                     break;
                 case EffectsEnum.Poison:
-                    enchantTypesList.Add(new PoisonEnchant(enchant.baseDamage));
+                    enchantTypesList.Add(new PoisonEnchant(enchant.baseValue));
+                    break;
+                case EffectsEnum.Ice:
+                    enchantTypesList.Add(new IceEnchant(enchant.baseValue));
                     break;
             }
         }
-        
+
     }
 
     public override void DoEffect(MainCharacterScript3D player)
@@ -44,5 +47,5 @@ public class EnchantSO : BonusSO
 public struct EnchantTypeAndDamage
 {
     public EffectsEnum enchanteffect;
-    public float baseDamage;
+    public float baseValue;
 }

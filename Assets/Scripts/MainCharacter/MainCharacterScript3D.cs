@@ -78,7 +78,6 @@ public class MainCharacterScript3D : Entity3D,IHealable
 
         InputManager.playerInputAction.UI.Resume.performed += UIResume_performed;
         currentPlayerStats = GetComponent<PlayerStats>();
-        Debug.Log("current damage: " + damage);
         currentPlayerStats.OnMaxHealthChange += OnMaxHealthChange;
         
     }

@@ -277,7 +277,6 @@ public class PlayerAttack3D : MonoBehaviour, IHitSource3D
     private void DealDamage(IHittable3D hitObject, float damageOutput)
     {
         hitObject.OnHit(damageOutput, this);
-        enchant?.EnchantEffect(hitObject);
         if(enchants != null)
         {
             foreach(IEnchantType enchant in enchants)
